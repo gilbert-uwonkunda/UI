@@ -808,12 +808,12 @@
             }).join('');
         }
 
-        function renderZoningChart(zoning) {
+        function renderZoningChart(zoning, nationalIllegal) {
             const container = document.getElementById('zoning-chart');
             const maxIllegal = Math.max(...zoning.map(z => z.illegal));
-            const totalIllegal = zoning.reduce((sum, z) => sum + z.illegal, 0);
             
-            document.getElementById('chart-zoning-total').textContent = formatNumber(totalIllegal);
+            // Use national total for consistency, not sum of top 12
+            document.getElementById('chart-zoning-total').textContent = formatNumber(nationalIllegal);
             
             const half = Math.ceil(zoning.length / 2);
             const leftColumn = zoning.slice(0, half);
@@ -916,7 +916,7 @@
                 renderStats(data);
                 renderDistrictChart(data.districts);
                 renderProvinceChart(data.provinces);
-                renderZoningChart(data.zoning);
+                renderZoningChart(data.zoning, data.national.illegal);
                 renderDistrictCards(data.districts);
                 
                 document.getElementById('app').classList.remove('loading');
