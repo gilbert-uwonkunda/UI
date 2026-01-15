@@ -1,0 +1,173 @@
+{
+  "updated": "2026-01-15 11:14",
+  "national": {
+    "total": 1533173,
+    "legal": 2315,
+    "illegal": 90131,
+    "existing": 1428467,
+    "demolished": 12260,
+    "compliance": 2.5
+  },
+  "provinces": {
+    "Western": {
+      "total": 301673,
+      "legal": 800,
+      "illegal": 25637,
+      "compliance": 3.0
+    },
+    "Eastern": {
+      "total": 855791,
+      "legal": 1254,
+      "illegal": 51303,
+      "compliance": 2.4
+    },
+    "Northern": {
+      "total": 183188,
+      "legal": 133,
+      "illegal": 3877,
+      "compliance": 3.3
+    },
+    "Southern": {
+      "total": 192521,
+      "legal": 128,
+      "illegal": 9314,
+      "compliance": 1.4
+    }
+  },
+  "districts": [
+    {
+      "province": "Eastern",
+      "district": "Bugesera",
+      "total": 117703,
+      "legal": 862,
+      "illegal": 27044,
+      "compliance": 3.1
+    },
+    {
+      "province": "Western",
+      "district": "Rubavu",
+      "total": 106180,
+      "legal": 786,
+      "illegal": 17059,
+      "compliance": 4.4
+    },
+    {
+      "province": "Eastern",
+      "district": "Nyagatare",
+      "total": 280116,
+      "legal": 164,
+      "illegal": 10777,
+      "compliance": 1.5
+    },
+    {
+      "province": "Southern",
+      "district": "Huye",
+      "total": 192521,
+      "legal": 128,
+      "illegal": 9314,
+      "compliance": 1.4
+    },
+    {
+      "province": "Western",
+      "district": "Rusizi",
+      "total": 195493,
+      "legal": 14,
+      "illegal": 8578,
+      "compliance": 0.2
+    },
+    {
+      "province": "Eastern",
+      "district": "Kayonza",
+      "total": 196356,
+      "legal": 101,
+      "illegal": 7719,
+      "compliance": 1.3
+    },
+    {
+      "province": "Eastern",
+      "district": "Kirehe",
+      "total": 220616,
+      "legal": 127,
+      "illegal": 5763,
+      "compliance": 2.2
+    },
+    {
+      "province": "Northern",
+      "district": "Musanze",
+      "total": 183188,
+      "legal": 133,
+      "illegal": 3877,
+      "compliance": 3.3
+    },
+    {
+      "province": "Eastern",
+      "district": "Rwamagana",
+      "total": 41000,
+      "legal": 0,
+      "illegal": 0,
+      "compliance": 0
+    }
+  ],
+  "zoning": [
+    {
+      "code": "R1A",
+      "illegal": 17381,
+      "color": "#ffec18"
+    },
+    {
+      "code": "A1",
+      "illegal": 17116,
+      "color": "#6e8131"
+    },
+    {
+      "code": "R1B",
+      "illegal": 12582,
+      "color": "#ffebb0"
+    },
+    {
+      "code": "R3",
+      "illegal": 11190,
+      "color": "#ff7f00"
+    },
+    {
+      "code": "R2",
+      "illegal": 8191,
+      "color": "#ffbb36"
+    },
+    {
+      "code": "C1",
+      "illegal": 6792,
+      "color": "#cc3366"
+    },
+    {
+      "code": "T1",
+      "illegal": 2435,
+      "color": "#b2b2b2"
+    },
+    {
+      "code": "C3",
+      "illegal": 1852,
+      "color": "#960202"
+    },
+    {
+      "code": "R1",
+      "illegal": 1779,
+      "color": "#ffff7f"
+    },
+    {
+      "code": "R4",
+      "illegal": 1737,
+      "color": "#ff5a25"
+    },
+    {
+      "code": "PF1",
+      "illegal": 1602,
+      "color": "#003fff"
+    },
+    {
+      "code": "ET",
+      "illegal": 1593,
+      "color": "#888888"
+    }
+  ]
+}

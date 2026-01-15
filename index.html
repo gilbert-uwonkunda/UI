@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rwanda Construction Inspection Platform</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+        
+        :root {
+            --bg-primary: #0b1a2b;
+            --bg-secondary: #10253a;
+            --bg-card: #0d2136;
+            --bg-card-hover: #1a3a54;
+            --accent-cyan: #00d9ff;
+            --accent-green: #00e676;
+            --accent-orange: #ff9100;
+            --accent-red: #ff5252;
+            --accent-yellow: #ffea00;
+            --text-primary: #ffffff;
+            --text-secondary: #6b8fa3;
+            --text-muted: #3d5a6e;
+            --border-color: #1a3a54;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .bg-pattern {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(0, 217, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(0, 230, 118, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .main {
+            position: relative;
+            z-index: 1;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 30px 40px;
+        }
+
+        /* Loading State */
+        .loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 18px;
+            background: rgba(0, 217, 255, 0.08);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--accent-cyan);
+            margin-bottom: 16px;
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+
+        .title {
+            font-size: clamp(28px, 3.5vw, 42px);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+        }
+
+        .title-gradient {
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, #0099ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            max-width: 550px;
+            margin: 0 auto;
+        }
+
+        /* Section Header */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: var(--accent-cyan);
+            border-radius: 2px;
+        }
+
+        .section-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--stat-color, var(--accent-cyan));
+        }
+
+        .stat-card.cyan { --stat-color: var(--accent-cyan); }
+        .stat-card.green { --stat-color: var(--accent-green); }
+        .stat-card.orange { --stat-color: var(--accent-orange); }
+        .stat-card.red { --stat-color: var(--accent-red); }
+        .stat-card.yellow { --stat-color: var(--accent-yellow); }
+
+        .stat-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--stat-color, var(--text-primary));
+        }
+
+        .stat-subtext {
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Charts Section */
+        .charts-section {
+            margin-bottom: 24px;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .chart-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .chart-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .chart-total {
+            text-align: right;
+        }
+
+        .chart-total-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent-red);
+        }
+
+        .chart-total-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Serial Bar Chart */
+        .serial-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chart-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chart-bar-label {
+            width: 80px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .chart-bar-container {
+            flex: 1;
+            height: 26px;
+            background: var(--bg-primary);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chart-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            transition: width 0.8s ease;
+            position: relative;
+        }
+
+        .chart-bar-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+            position: absolute;
+            right: 10px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .chart-bar-value.dark {
+            color: #1a1a2e;
+            text-shadow: none;
+        }
+
+        /* Zoning Chart */
+        .zoning-chart {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .zoning-column {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .zoning-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .zoning-bar-label {
+            width: 45px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .zoning-bar-container {
+            flex: 1;
+            height: 22px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .zoning-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            transition: width 0.8s ease;
+        }
+
+        .zoning-bar-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .zoning-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .zoning-legend-item {
+            font-size: 10px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .zoning-legend-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+
+        /* District Cards */
+        .districts-section {
+            margin-bottom: 24px;
+        }
+
+        .districts-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .district-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .district-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--card-color, var(--accent-cyan));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .district-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--card-color, var(--accent-cyan));
+            transform: translateY(-3px);
+        }
+
+        .district-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .district-card.eastern { --card-color: var(--accent-green); }
+        .district-card.western { --card-color: var(--accent-red); }
+        .district-card.northern { --card-color: var(--accent-orange); }
+        .district-card.southern { --card-color: var(--accent-yellow); }
+
+        .district-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .district-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .district-province {
+            font-size: 10px;
+            color: var(--card-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        .district-arrow {
+            width: 26px;
+            height: 26px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .district-card:hover .district-arrow {
+            background: var(--card-color);
+            transform: translateX(3px);
+        }
+
+        .district-arrow svg {
+            width: 12px;
+            height: 12px;
+            stroke: var(--text-muted);
+            transition: stroke 0.3s ease;
+        }
+
+        .district-card:hover .district-arrow svg {
+            stroke: var(--bg-primary);
+        }
+
+        .district-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .district-stat {
+            text-align: center;
+        }
+
+        .district-stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .district-stat-value.highlight {
+            color: var(--card-color);
+        }
+
+        .district-stat-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-text {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 16px;
+        }
+
+        .footer-links a {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-cyan);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+            .districts-grid { grid-template-columns: repeat(3, 1fr); }
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 900px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .districts-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            .main { padding: 20px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .districts-grid { grid-template-columns: 1fr; }
+            .zoning-chart { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    
+    <main class="main" id="app">
+        <!-- Hero -->
+        <section class="hero">
+            <div class="badge">
+                <span class="badge-dot"></span>
+                <span>2023-2025 Construction Monitoring • <span id="province-count">4</span> Provinces • <span id="district-count">9</span> Districts</span>
+            </div>
+            <h1 class="title">
+                National <span class="title-gradient">Construction</span> Compliance Monitoring
+            </h1>
+            <p class="subtitle">
+                AI-powered spatial analysis detecting building compliance across Rwanda. 
+                Transforming satellite imagery into actionable enforcement Insights.
+            </p>
+        </section>
+
+        <!-- National Stats -->
+        <section>
+            <div class="section-header">
+                <h2 class="section-title">National Overview</h2>
+                <span class="section-meta">Last updated: <span id="last-updated">--</span></span>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card cyan">
+                    <div class="stat-label">Total Detected</div>
+                    <div class="stat-value" id="stat-total">--</div>
+                    <div class="stat-subtext">Buildings nationwide</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-label">Legal</div>
+                    <div class="stat-value" id="stat-legal">--</div>
+                    <div class="stat-subtext">Verified compliant</div>
+                </div>
+                <div class="stat-card orange">
+                    <div class="stat-label">Illegal</div>
+                    <div class="stat-value" id="stat-illegal">--</div>
+                    <div class="stat-subtext">Violations detected</div>
+                </div>
+                <div class="stat-card yellow">
+                    <div class="stat-label">Existing</div>
+                    <div class="stat-value" id="stat-existing">--</div>
+                    <div class="stat-subtext">Pending verification</div>
+                </div>
+                <div class="stat-card red">
+                    <div class="stat-label">Compliance Rate</div>
+                    <div class="stat-value" id="stat-compliance">--</div>
+                    <div class="stat-subtext" id="stat-compliance-detail">--</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="charts-section">
+            <div class="charts-grid">
+                <!-- Illegal by District -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div>
+                            <div class="chart-title">Illegal Constructions by District</div>
+                            <div class="chart-subtitle">Enforcement priority ranking</div>
+                        </div>
+                        <div class="chart-total">
+                            <div class="chart-total-value" id="chart-district-total">--</div>
+                            <div class="chart-total-label">Total Illegal</div>
+                        </div>
+                    </div>
+                    <div class="serial-chart" id="district-chart">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Illegal by Province -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div>
+                            <div class="chart-title">Illegal Constructions by Province</div>
+                            <div class="chart-subtitle">Provincial enforcement priority</div>
+                        </div>
+                    </div>
+                    <div class="serial-chart" id="province-chart">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Illegal by Zoning -->
+                <div class="chart-card full-width">
+                    <div class="chart-header">
+                        <div>
+                            <div class="chart-title">Illegal Constructions by Zoning Classification</div>
+                            <div class="chart-subtitle">Using official Rwanda zoning colors</div>
+                        </div>
+                        <div class="chart-total">
+                            <div class="chart-total-value" id="chart-zoning-total">--</div>
+                            <div class="chart-total-label">Total Illegal</div>
+                        </div>
+                    </div>
+                    <div class="zoning-chart" id="zoning-chart">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Districts -->
+        <section class="districts-section">
+            <div class="section-header">
+                <h2 class="section-title">Explore by District</h2>
+                <span class="section-meta">Sorted by enforcement priority</span>
+            </div>
+
+            <div class="districts-grid" id="districts-grid">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span class="footer-text">Rwanda Construction Inspection Platform</span>
+            <div class="footer-links">
+                <a href="#">National Land Authority</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // Configuration
+        const DATA_URL = 'https://gilbert-uwonkunda.github.io/UI/construction_stats.json';
+        const APP_ID = '91d3be1350b746e08990f6c75fbb1c62';
+        const EXB_BASE_URL = 'https://geodata.rw/portal/apps/experiencebuilder/experience/';
+        
+        const PROVINCE_COLORS = {
+            'Eastern': { bg: 'linear-gradient(90deg, #00e676, #69f0ae)', class: 'eastern' },
+            'Western': { bg: 'linear-gradient(90deg, #ff5252, #ff8a80)', class: 'western' },
+            'Southern': { bg: 'linear-gradient(90deg, #ffea00, #ffff8d)', class: 'southern' },
+            'Northern': { bg: 'linear-gradient(90deg, #ff9100, #ffab40)', class: 'northern' }
+        };
+
+        const DISTRICT_PAGES = {
+            'Bugesera': 'Eastern-Province',
+            'Rubavu': 'Western-Province',
+            'Nyagatare': 'Eastern-Province',
+            'Huye': 'Southern-Province',
+            'Rusizi': 'Western-Province',
+            'Kayonza': 'Eastern-Province',
+            'Kirehe': 'Eastern-Province',
+            'Musanze': 'Northern-Province',
+            'Rwamagana': 'Eastern-Province'
+        };
+
+        const ZONING_LABELS = {
+            'R1A': 'Low Density',
+            'A1': 'Agriculture',
+            'R1B': 'Rural Residential',
+            'R3': 'Medium Expansion',
+            'R2': 'Medium Density',
+            'C1': 'Mixed Commercial',
+            'T1': 'Road Reserve',
+            'C3': 'City Commercial',
+            'R1': 'Residential',
+            'R4': 'High Density',
+            'PF1': 'Public Facilities'
+        };
+
+        // Utility functions
+        const formatNumber = (num) => num?.toLocaleString() ?? '--';
+        const formatK = (num) => num >= 1000 ? (num/1000).toFixed(1) + 'K' : num?.toString() ?? '--';
+
+        // Render functions
+        function renderStats(data) {
+            const n = data.national;
+            document.getElementById('stat-total').textContent = formatNumber(n.total);
+            document.getElementById('stat-legal').textContent = formatNumber(n.legal);
+            document.getElementById('stat-illegal').textContent = formatNumber(n.illegal);
+            document.getElementById('stat-existing').textContent = formatNumber(n.existing);
+            document.getElementById('stat-compliance').textContent = n.compliance + '%';
+            document.getElementById('stat-compliance-detail').textContent = `${formatNumber(n.legal)} of ${formatNumber(n.legal + n.illegal)}`;
+            document.getElementById('last-updated').textContent = data.updated;
+            document.getElementById('province-count').textContent = Object.keys(data.provinces).length;
+            document.getElementById('district-count').textContent = data.districts.length;
+        }
+
+        function renderDistrictChart(districts) {
+            const container = document.getElementById('district-chart');
+            const maxIllegal = Math.max(...districts.map(d => d.illegal));
+            const totalIllegal = districts.reduce((sum, d) => sum + d.illegal, 0);
+            
+            document.getElementById('chart-district-total').textContent = formatNumber(totalIllegal);
+            
+            // Filter out districts with 0 illegal
+            const filtered = districts.filter(d => d.illegal > 0);
+            
+            container.innerHTML = filtered.map((d, i) => {
+                const width = (d.illegal / maxIllegal * 100).toFixed(1);
+                const intensity = Math.floor(255 - (i * 20));
+                const color = `rgb(255, ${Math.min(intensity, 240)}, ${Math.min(intensity, 240)})`;
+                const isDark = i > 4;
+                
+                return `
+                    <div class="chart-bar-row">
+                        <span class="chart-bar-label">${d.district}</span>
+                        <div class="chart-bar-container">
+                            <div class="chart-bar-fill" style="width: ${width}%; background: ${color};">
+                                <span class="chart-bar-value ${isDark ? 'dark' : ''}">${formatNumber(d.illegal)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderProvinceChart(provinces) {
+            const container = document.getElementById('province-chart');
+            const sorted = Object.entries(provinces)
+                .map(([name, data]) => ({ name, ...data }))
+                .sort((a, b) => b.illegal - a.illegal);
+            
+            const maxIllegal = Math.max(...sorted.map(p => p.illegal));
+            
+            container.innerHTML = sorted.map(p => {
+                const width = (p.illegal / maxIllegal * 100).toFixed(1);
+                const config = PROVINCE_COLORS[p.name] || { bg: '#666' };
+                const isDark = ['Eastern', 'Southern', 'Northern'].includes(p.name);
+                
+                return `
+                    <div class="chart-bar-row">
+                        <span class="chart-bar-label">${p.name}</span>
+                        <div class="chart-bar-container">
+                            <div class="chart-bar-fill" style="width: ${width}%; background: ${config.bg};">
+                                <span class="chart-bar-value ${isDark ? 'dark' : ''}">${formatNumber(p.illegal)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderZoningChart(zoning) {
+            const container = document.getElementById('zoning-chart');
+            const maxIllegal = Math.max(...zoning.map(z => z.illegal));
+            const totalIllegal = zoning.reduce((sum, z) => sum + z.illegal, 0);
+            
+            document.getElementById('chart-zoning-total').textContent = formatNumber(totalIllegal);
+            
+            const half = Math.ceil(zoning.length / 2);
+            const leftColumn = zoning.slice(0, half);
+            const rightColumn = zoning.slice(half);
+            
+            const lightColors = ['#ffec18', '#ffebb0', '#ffbb36', '#b2b2b2', '#ffff7f'];
+            
+            const renderColumn = (items) => items.map(z => {
+                const width = (z.illegal / maxIllegal * 100).toFixed(1);
+                const isDark = lightColors.includes(z.color);
+                
+                return `
+                    <div class="zoning-bar-row">
+                        <span class="zoning-bar-label">${z.code}</span>
+                        <div class="zoning-bar-container">
+                            <div class="zoning-bar-fill" style="width: ${width}%; background: ${z.color};">
+                                <span class="zoning-bar-value" style="color: ${isDark ? '#1a1a2e' : '#fff'};">${formatNumber(z.illegal)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Build legend from top 4 zones
+            const legendItems = zoning.slice(0, 4).map(z => `
+                <span class="zoning-legend-item">
+                    <span class="zoning-legend-color" style="background: ${z.color};"></span>
+                    ${z.code}: ${ZONING_LABELS[z.code] || z.code}
+                </span>
+            `).join('');
+            
+            container.innerHTML = `
+                <div class="zoning-column">${renderColumn(leftColumn)}</div>
+                <div class="zoning-column">
+                    ${renderColumn(rightColumn)}
+                    <div class="zoning-legend">${legendItems}</div>
+                </div>
+            `;
+        }
+
+        function renderDistrictCards(districts) {
+            const container = document.getElementById('districts-grid');
+            
+            container.innerHTML = districts.map((d, i) => {
+                const config = PROVINCE_COLORS[d.province] || { class: '' };
+                const priority = d.illegal > 0 ? `#${i + 1} Priority` : 'Pending';
+                const showPriority = i < 5 && d.illegal > 0;
+                
+                return `
+                    <a href="#" class="district-card ${config.class}" data-district="${d.district}">
+                        <div class="district-header">
+                            <div>
+                                <div class="district-name">${d.district}</div>
+                                <div class="district-province">${d.province}${showPriority ? ' • ' + priority : (d.illegal === 0 ? ' • Pending' : '')}</div>
+                            </div>
+                            <div class="district-arrow">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="district-stats">
+                            <div class="district-stat">
+                                <div class="district-stat-value">${formatK(d.total)}</div>
+                                <div class="district-stat-label">Total</div>
+                            </div>
+                            <div class="district-stat">
+                                <div class="district-stat-value">${formatNumber(d.illegal)}</div>
+                                <div class="district-stat-label">Illegal</div>
+                            </div>
+                            <div class="district-stat">
+                                <div class="district-stat-value highlight">${d.compliance > 0 ? d.compliance + '%' : '—'}</div>
+                                <div class="district-stat-label">Compliance</div>
+                            </div>
+                        </div>
+                    </a>
+                `;
+            }).join('');
+            
+            // Add click handlers
+            container.querySelectorAll('.district-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const district = card.dataset.district;
+                    const page = DISTRICT_PAGES[district];
+                    if (page) {
+                        const url = `${EXB_BASE_URL}?id=${APP_ID}&page=${page}&views=${district}`;
+                        window.parent.location.href = url;
+                    }
+                });
+            });
+        }
+
+        // Load and render data
+        async function loadData() {
+            try {
+                const response = await fetch(DATA_URL + '?t=' + Date.now()); // Cache bust
+                const data = await response.json();
+                
+                renderStats(data);
+                renderDistrictChart(data.districts);
+                renderProvinceChart(data.provinces);
+                renderZoningChart(data.zoning);
+                renderDistrictCards(data.districts);
+                
+                document.getElementById('app').classList.remove('loading');
+            } catch (error) {
+                console.error('Failed to load data:', error);
+                document.getElementById('last-updated').textContent = 'Error loading data';
+            }
+        }
+
+        // Initialize
+        document.getElementById('app').classList.add('loading');
+        loadData();
+    </script>
+</body>
+</html>
