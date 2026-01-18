@@ -1165,7 +1165,7 @@
                 const navUrl = page ? `${EXB_BASE_URL}?id=${APP_ID}&page=${page}&views=${d.district}` : '#';
                 
                 return `
-                    <a href="${navUrl}" target="_top" class="district-card ${complianceClass}" data-district="${d.district}">
+                    <a href="${navUrl}" target="_blank" rel="noopener" class="district-card ${complianceClass}" data-district="${d.district}">
                         <div class="district-header">
                             <div>
                                 <div class="district-name">${d.district}</div>
