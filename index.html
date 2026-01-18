@@ -168,6 +168,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .zoning-breakdown-title {
@@ -177,6 +179,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .zoning-breakdown-title .zone-badge {
@@ -187,9 +190,34 @@
             font-weight: 700;
         }
 
+        .zoning-breakdown-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+        }
+
+        .zoning-breakdown-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .zoning-breakdown-stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        .zoning-breakdown-stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
         .zoning-breakdown-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 12px;
         }
 
@@ -197,8 +225,9 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 12px 16px;
             background: var(--bg-primary);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -206,6 +235,7 @@
 
         .zoning-district-item:hover {
             background: var(--bg-card-hover);
+            border-color: var(--accent-cyan);
             transform: translateX(4px);
         }
 
@@ -227,11 +257,37 @@
             text-transform: uppercase;
         }
 
+        .zoning-district-stats {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .zoning-district-value {
             font-family: 'JetBrains Mono', monospace;
             font-size: 14px;
             font-weight: 700;
             color: var(--accent-red);
+        }
+
+        .zoning-district-percent {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .zoning-district-arrow {
+            color: var(--text-muted);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .zoning-district-item:hover .zoning-district-arrow {
+            color: var(--accent-cyan);
+            transform: translateX(4px);
         }
 
         /* Section Header */
@@ -694,7 +750,17 @@
                 <div class="zoning-breakdown-title">
                     <span>Illegal Constructions in Zone</span>
                     <span class="zone-badge" id="zone-badge">--</span>
-                    <span>by District</span>
+                    <span id="zone-name">--</span>
+                </div>
+                <div class="zoning-breakdown-stats">
+                    <div class="zoning-breakdown-stat">
+                        <span class="zoning-breakdown-stat-value" id="zone-total-illegal">--</span>
+                        <span class="zoning-breakdown-stat-label">Total Illegal</span>
+                    </div>
+                    <div class="zoning-breakdown-stat">
+                        <span class="zoning-breakdown-stat-value" id="zone-district-count">--</span>
+                        <span class="zoning-breakdown-stat-label">Districts Affected</span>
+                    </div>
                 </div>
             </div>
             <div class="zoning-breakdown-grid" id="zoning-breakdown-grid">
@@ -835,16 +901,32 @@
         const ZONING_LABELS = {
             'R1A': 'Low Density Residential',
             'A1': 'Agriculture',
+            'A2': 'Agriculture Zone 2',
             'R1B': 'Rural Residential',
             'R3': 'Medium Expansion',
             'R2': 'Medium Density',
             'C1': 'Mixed Commercial',
             'T1': 'Road Reserve',
+            'T': 'Transport',
             'C3': 'City Commercial',
             'R1': 'Residential',
             'R4': 'High Density',
             'PF1': 'Public Facilities',
-            'ET': 'Eco-Tourism'
+            'PF2': 'Public Facilities 2',
+            'PF3': 'Public Facilities 3',
+            'ET': 'Eco-Tourism',
+            'F5': 'Forest Reserve',
+            'I1': 'Light Industrial',
+            'I2': 'Medium Industrial',
+            'I3': 'Heavy Industrial',
+            'P1': 'Protected Area 1',
+            'P2': 'Protected Area 2',
+            'PA': 'Protected Area',
+            'U': 'Urban',
+            'W2': 'Wetland 2',
+            'W3': 'Wetland 3',
+            'W4': 'Wetland 4',
+            'W5': 'Wetland 5'
         };
 
         let allData = null;
@@ -912,62 +994,104 @@
             const panel = document.getElementById('zoning-breakdown');
             const grid = document.getElementById('zoning-breakdown-grid');
             const badge = document.getElementById('zone-badge');
+            const zoneName = document.getElementById('zone-name');
+            const zoneTotalIllegal = document.getElementById('zone-total-illegal');
+            const zoneDistrictCount = document.getElementById('zone-district-count');
             
-            // Get zoning color
+            // Get zoning color from the zoning array
             const zoningData = allData.zoning.find(z => z.code === zoneCode);
             const zoneColor = zoningData ? zoningData.color : '#666';
-            const isLightColor = ['#ffec18', '#ffebb0', '#ffbb36', '#b2b2b2', '#ffff7f'].includes(zoneColor);
+            const lightColors = ['#ffec18', '#ffebb0', '#ffbb36', '#b2b2b2', '#ffff7f', '#ffea00', '#c6e0b4'];
+            const isLightColor = lightColors.some(c => zoneColor.toLowerCase() === c.toLowerCase());
             
+            // Set badge styling
             badge.textContent = zoneCode;
             badge.style.background = zoneColor;
             badge.style.color = isLightColor ? '#0d1520' : '#fff';
             
+            // Set zone name
+            zoneName.textContent = `(${ZONING_LABELS[zoneCode] || 'Unknown Zone'})`;
+            
             // Check if we have zoning breakdown by district
             if (hasZoningByDistrict) {
                 // Build district breakdown from data
+                // Filter districts that have this zone code in their zoning object
                 const districtBreakdown = allData.districts
-                    .filter(d => d.zoning && d.zoning[zoneCode] > 0)
+                    .filter(d => d.zoning && d.zoning[zoneCode] && d.zoning[zoneCode] > 0)
                     .map(d => ({
                         district: d.district,
                         province: d.province,
-                        illegal: d.zoning[zoneCode]
+                        illegal: d.zoning[zoneCode],
+                        totalDistrictIllegal: d.illegal
                     }))
                     .sort((a, b) => b.illegal - a.illegal);
                 
                 if (districtBreakdown.length > 0) {
-                    grid.innerHTML = districtBreakdown.map(d => `
-                        <div class="zoning-district-item" data-district="${d.district}">
-                            <div class="zoning-district-info">
-                                <span class="zoning-district-name">${d.district}</span>
-                                <span class="zoning-district-province">${d.province}</span>
-                            </div>
-                            <span class="zoning-district-value">${formatNumber(d.illegal)}</span>
-                        </div>
-                    `).join('');
+                    // Calculate totals
+                    const totalIllegalInZone = districtBreakdown.reduce((sum, d) => sum + d.illegal, 0);
+                    const affectedDistricts = districtBreakdown.length;
                     
-                    // Add click handlers to navigate
+                    // Update header stats
+                    zoneTotalIllegal.textContent = formatNumber(totalIllegalInZone);
+                    zoneDistrictCount.textContent = affectedDistricts;
+                    
+                    // Render district cards
+                    grid.innerHTML = districtBreakdown.map((d, index) => {
+                        const percentage = d.totalDistrictIllegal > 0 
+                            ? ((d.illegal / d.totalDistrictIllegal) * 100).toFixed(1) 
+                            : 0;
+                        const shareOfZone = ((d.illegal / totalIllegalInZone) * 100).toFixed(1);
+                        
+                        return `
+                            <div class="zoning-district-item" data-district="${d.district}">
+                                <div class="zoning-district-info">
+                                    <span class="zoning-district-name">${index + 1}. ${d.district}</span>
+                                    <span class="zoning-district-province">${d.province}</span>
+                                </div>
+                                <div class="zoning-district-stats">
+                                    <span class="zoning-district-percent">${shareOfZone}% of zone</span>
+                                    <span class="zoning-district-value">${formatNumber(d.illegal)}</span>
+                                    <span class="zoning-district-arrow">→</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    // Add click handlers to navigate to district
                     grid.querySelectorAll('.zoning-district-item').forEach(item => {
                         item.addEventListener('click', () => {
                             const district = item.dataset.district;
                             const page = DISTRICT_PAGES[district];
                             if (page) {
                                 const url = `${EXB_BASE_URL}?id=${APP_ID}&page=${page}&views=${district}`;
-                                window.parent.location.href = url;
+                                window.open(url, '_blank');
                             }
                         });
                     });
                     
                     panel.classList.add('active');
                 } else {
-                    grid.innerHTML = '<div class="data-unavailable">No district data available for this zone</div>';
+                    // No districts have this zone
+                    zoneTotalIllegal.textContent = '0';
+                    zoneDistrictCount.textContent = '0';
+                    grid.innerHTML = `
+                        <div class="data-unavailable">
+                            <p>No illegal constructions found in zone ${zoneCode} across any district.</p>
+                        </div>
+                    `;
                     panel.classList.add('active');
                 }
             } else {
-                // No zoning by district data - show message with instructions
+                // No zoning by district data available
+                zoneTotalIllegal.textContent = zoningData ? formatNumber(zoningData.illegal) : '--';
+                zoneDistrictCount.textContent = '--';
                 grid.innerHTML = `
                     <div class="data-unavailable">
                         <p>📊 District-level zoning breakdown not available in current data.</p>
-                        <p style="margin-top: 8px; font-size: 11px;">To enable this feature, add a "zoning" object to each district in your JSON with zone codes and illegal counts.</p>
+                        <p style="margin-top: 8px; font-size: 11px;">
+                            To enable this feature, run the updated export script that includes 
+                            a "zoning" object for each district with zone codes and illegal counts.
+                        </p>
                     </div>
                 `;
                 panel.classList.add('active');
@@ -1019,6 +1143,13 @@
                 } else if (activeFilter.type === 'province') {
                     const d = allData.districts.find(d => d.district === district);
                     if (d) row.classList.add(d.province === activeFilter.value ? 'active' : 'dimmed');
+                } else if (activeFilter.type === 'zoning' && hasZoningByDistrict) {
+                    const d = allData.districts.find(d => d.district === district);
+                    if (d && d.zoning && d.zoning[activeFilter.value] > 0) {
+                        row.classList.add('active');
+                    } else {
+                        row.classList.add('dimmed');
+                    }
                 }
             });
 
@@ -1030,6 +1161,12 @@
                 } else if (activeFilter.type === 'district') {
                     const d = allData.districts.find(d => d.district === activeFilter.value);
                     if (d) row.classList.add(d.province === province ? 'active' : 'dimmed');
+                } else if (activeFilter.type === 'zoning' && hasZoningByDistrict) {
+                    // Check if any district in this province has this zone
+                    const provinceHasZone = allData.districts.some(d => 
+                        d.province === province && d.zoning && d.zoning[activeFilter.value] > 0
+                    );
+                    row.classList.add(provinceHasZone ? 'active' : 'dimmed');
                 }
             });
 
@@ -1070,8 +1207,12 @@
             document.getElementById('stat-legal').textContent = formatNumber(n.legal);
             document.getElementById('stat-illegal').textContent = formatNumber(n.illegal);
             document.getElementById('stat-existing').textContent = formatNumber(n.existing);
-            document.getElementById('stat-compliance').textContent = n.compliance + '%';
-            document.getElementById('stat-compliance-detail').textContent = `${formatNumber(n.legal)} of ${formatNumber(n.legal + n.illegal)}`;
+            
+            // Calculate compliance if not provided
+            const verified = n.legal + n.illegal;
+            const compliance = verified > 0 ? ((n.legal / verified) * 100).toFixed(1) : 0;
+            document.getElementById('stat-compliance').textContent = compliance + '%';
+            document.getElementById('stat-compliance-detail').textContent = `${formatNumber(n.legal)} of ${formatNumber(verified)}`;
             document.getElementById('last-updated').textContent = data.updated;
             document.getElementById('province-count').textContent = Object.keys(data.provinces).length;
             document.getElementById('district-count').textContent = data.districts.length;
@@ -1131,16 +1272,16 @@
             document.getElementById('chart-zoning-total').textContent = formatNumber(nationalIllegal);
             
             const half = Math.ceil(zoning.length / 2);
-            const lightColors = ['#ffec18', '#ffebb0', '#ffbb36', '#b2b2b2', '#ffff7f', '#ffea00'];
+            const lightColors = ['#ffec18', '#ffebb0', '#ffbb36', '#b2b2b2', '#ffff7f', '#ffea00', '#c6e0b4'];
             
             const renderColumn = (items) => items.map(z => {
                 const width = Math.max((z.illegal / maxIllegal * 100), 15).toFixed(1);
-                const isDark = lightColors.some(c => z.color.toLowerCase().includes(c.slice(1).toLowerCase()));
+                const isLight = lightColors.some(c => z.color.toLowerCase() === c.toLowerCase());
                 return `<div class="zoning-bar-row" data-zoning="${z.code}">
                     <span class="zoning-bar-label">${z.code}</span>
                     <div class="zoning-bar-container">
                         <div class="zoning-bar-fill" style="width: ${width}%; background: ${z.color};">
-                            <span class="zoning-bar-value" style="color: ${isDark ? '#0d1520' : '#fff'};">${formatNumber(z.illegal)}</span>
+                            <span class="zoning-bar-value" style="color: ${isLight ? '#0d1520' : '#fff'};">${formatNumber(z.illegal)}</span>
                         </div>
                     </div>
                 </div>`;
@@ -1205,7 +1346,15 @@
                 allData = await response.json();
                 
                 // Check if data has zoning breakdown by district
-                hasZoningByDistrict = allData.districts.some(d => d.zoning && Object.keys(d.zoning).length > 0);
+                // Look for districts that have a "zoning" object with at least one zone code
+                hasZoningByDistrict = allData.districts.some(d => 
+                    d.zoning && typeof d.zoning === 'object' && Object.keys(d.zoning).length > 0
+                );
+                
+                console.log('Data loaded. Zoning by district available:', hasZoningByDistrict);
+                if (hasZoningByDistrict) {
+                    console.log('Sample district zoning:', allData.districts[0]?.zoning);
+                }
                 
                 renderStats(allData);
                 renderDistrictChart(allData.districts);
