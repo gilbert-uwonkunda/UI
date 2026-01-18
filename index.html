@@ -51,17 +51,10 @@
             padding: 30px 40px;
         }
 
-        /* Loading State */
-        .loading {
-            opacity: 0.5;
-            pointer-events: none;
-        }
+        .loading { opacity: 0.5; pointer-events: none; }
 
-        /* Hero Section */
-        .hero {
-            text-align: center;
-            margin-bottom: 32px;
-        }
+        /* Hero */
+        .hero { text-align: center; margin-bottom: 32px; }
 
         .badge {
             display: inline-flex;
@@ -113,6 +106,49 @@
             margin: 0 auto;
         }
 
+        /* Filter Banner */
+        .filter-banner {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 12px 20px;
+            background: linear-gradient(90deg, rgba(0, 217, 255, 0.1), rgba(0, 230, 118, 0.1));
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            animation: slideDown 0.3s ease;
+        }
+
+        .filter-banner.active { display: flex; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .filter-banner-text { font-size: 13px; color: var(--text-primary); }
+        .filter-banner-value { font-weight: 600; color: var(--accent-cyan); }
+
+        .filter-banner-clear {
+            background: rgba(255, 82, 82, 0.2);
+            border: 1px solid rgba(255, 82, 82, 0.4);
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--accent-red);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-banner-clear:hover { background: rgba(255, 82, 82, 0.3); transform: scale(1.02); }
+        .filter-banner-clear svg { width: 14px; height: 14px; }
+
         /* Section Header */
         .section-header {
             display: flex;
@@ -138,10 +174,7 @@
             border-radius: 2px;
         }
 
-        .section-meta {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
+        .section-meta { font-size: 11px; color: var(--text-muted); }
 
         /* Stats Grid */
         .stats-grid {
@@ -158,6 +191,7 @@
             padding: 16px;
             position: relative;
             overflow: hidden;
+            transition: all 0.3s ease;
         }
 
         .stat-card::before {
@@ -189,18 +223,13 @@
             font-size: 22px;
             font-weight: 700;
             color: var(--stat-color, var(--text-primary));
+            transition: all 0.3s ease;
         }
 
-        .stat-subtext {
-            font-size: 10px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
+        .stat-subtext { font-size: 10px; color: var(--text-secondary); margin-top: 4px; }
 
-        /* Charts Section */
-        .charts-section {
-            margin-bottom: 24px;
-        }
+        /* Charts */
+        .charts-section { margin-bottom: 24px; }
 
         .charts-grid {
             display: grid;
@@ -213,11 +242,11 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 20px;
+            transition: border-color 0.3s ease;
         }
 
-        .chart-card.full-width {
-            grid-column: 1 / -1;
-        }
+        .chart-card.has-filter { border-color: var(--accent-cyan); }
+        .chart-card.full-width { grid-column: 1 / -1; }
 
         .chart-header {
             display: flex;
@@ -226,47 +255,49 @@
             margin-bottom: 20px;
         }
 
-        .chart-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
+        .chart-title-wrapper { display: flex; align-items: center; gap: 8px; }
+        .chart-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+
+        .chart-interactive-hint {
+            font-size: 10px;
+            color: var(--accent-cyan);
+            background: rgba(0, 217, 255, 0.1);
+            padding: 3px 8px;
+            border-radius: 4px;
+            opacity: 0.8;
         }
 
-        .chart-subtitle {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        .chart-total {
-            text-align: right;
-        }
+        .chart-subtitle { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+        .chart-total { text-align: right; }
 
         .chart-total-value {
             font-family: 'JetBrains Mono', monospace;
             font-size: 20px;
             font-weight: 700;
             color: var(--accent-red);
+            transition: all 0.3s ease;
         }
 
-        .chart-total-label {
-            font-size: 10px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
+        .chart-total-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
 
-        /* Serial Bar Chart */
-        .serial-chart {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        /* Bar Charts */
+        .serial-chart { display: flex; flex-direction: column; gap: 10px; }
 
         .chart-bar-row {
             display: flex;
             align-items: center;
             gap: 12px;
+            cursor: pointer;
+            padding: 4px;
+            margin: -4px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
         }
+
+        .chart-bar-row:hover { background: rgba(0, 217, 255, 0.05); }
+        .chart-bar-row.active { background: rgba(0, 217, 255, 0.1); }
+        .chart-bar-row.dimmed { opacity: 0.3; }
+        .chart-bar-row.dimmed:hover { opacity: 0.6; }
 
         .chart-bar-label {
             width: 80px;
@@ -274,11 +305,15 @@
             color: var(--text-secondary);
             text-align: right;
             flex-shrink: 0;
+            transition: color 0.2s ease;
         }
+
+        .chart-bar-row:hover .chart-bar-label,
+        .chart-bar-row.active .chart-bar-label { color: var(--text-primary); }
 
         .chart-bar-container {
             flex: 1;
-            height: 26px;
+            height: 28px;
             background: var(--bg-primary);
             border-radius: 6px;
             overflow: hidden;
@@ -290,43 +325,52 @@
             border-radius: 6px;
             display: flex;
             align-items: center;
-            transition: width 0.8s ease;
+            justify-content: flex-end;
+            transition: all 0.4s ease;
             position: relative;
+            min-width: 60px;
         }
+
+        .chart-bar-row:hover .chart-bar-fill { filter: brightness(1.1); transform: scaleY(1.05); }
 
         .chart-bar-value {
             font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
-            font-weight: 600;
-            color: #fff;
-            position: absolute;
-            right: 10px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            font-weight: 700;
+            color: #0d1520;
+            padding-right: 10px;
         }
 
-        .chart-bar-value.dark {
-            color: #1a1a2e;
-            text-shadow: none;
+        .chart-bar-row::after {
+            content: '→';
+            opacity: 0;
+            color: var(--accent-cyan);
+            font-size: 14px;
+            transition: all 0.2s ease;
+            margin-left: 8px;
         }
+
+        .chart-bar-row:hover::after { opacity: 1; transform: translateX(3px); }
+        .chart-bar-row.active::after { content: '✓'; opacity: 1; color: var(--accent-green); }
 
         /* Zoning Chart */
-        .zoning-chart {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .zoning-column {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        .zoning-chart { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .zoning-column { display: flex; flex-direction: column; gap: 8px; }
 
         .zoning-bar-row {
             display: flex;
             align-items: center;
             gap: 10px;
+            cursor: pointer;
+            padding: 3px;
+            margin: -3px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
+
+        .zoning-bar-row:hover { background: rgba(0, 217, 255, 0.05); }
+        .zoning-bar-row.active { background: rgba(0, 217, 255, 0.1); }
+        .zoning-bar-row.dimmed { opacity: 0.3; }
 
         .zoning-bar-label {
             width: 45px;
@@ -340,11 +384,10 @@
 
         .zoning-bar-container {
             flex: 1;
-            height: 22px;
+            height: 24px;
             background: var(--bg-primary);
             border-radius: 4px;
             overflow: hidden;
-            position: relative;
         }
 
         .zoning-bar-fill {
@@ -354,13 +397,16 @@
             align-items: center;
             justify-content: flex-end;
             padding-right: 8px;
-            transition: width 0.8s ease;
+            transition: all 0.4s ease;
+            min-width: 50px;
         }
+
+        .zoning-bar-row:hover .zoning-bar-fill { filter: brightness(1.1); transform: scaleY(1.08); }
 
         .zoning-bar-value {
             font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .zoning-legend {
@@ -380,16 +426,10 @@
             gap: 4px;
         }
 
-        .zoning-legend-color {
-            width: 10px;
-            height: 10px;
-            border-radius: 2px;
-        }
+        .zoning-legend-color { width: 10px; height: 10px; border-radius: 2px; }
 
         /* District Cards */
-        .districts-section {
-            margin-bottom: 24px;
-        }
+        .districts-section { margin-bottom: 24px; }
 
         .districts-grid {
             display: grid;
@@ -427,16 +467,19 @@
             background: var(--bg-card-hover);
             border-color: var(--card-color, var(--accent-cyan));
             transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
 
-        .district-card:hover::before {
-            transform: scaleX(1);
-        }
+        .district-card:hover::before { transform: scaleX(1); }
 
         .district-card.eastern { --card-color: var(--accent-green); }
         .district-card.western { --card-color: var(--accent-red); }
         .district-card.northern { --card-color: var(--accent-orange); }
         .district-card.southern { --card-color: var(--accent-yellow); }
+
+        .district-card.filtered-out { opacity: 0.15; transform: scale(0.98); pointer-events: none; }
+        .district-card.highlighted { border-color: var(--card-color); box-shadow: 0 0 20px rgba(0, 217, 255, 0.2); }
+        .district-card.highlighted::before { transform: scaleX(1); }
 
         .district-header {
             display: flex;
@@ -445,11 +488,7 @@
             margin-bottom: 12px;
         }
 
-        .district-name {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
+        .district-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
 
         .district-province {
             font-size: 10px;
@@ -460,8 +499,8 @@
         }
 
         .district-arrow {
-            width: 26px;
-            height: 26px;
+            width: 28px;
+            height: 28px;
             background: rgba(255,255,255,0.05);
             border-radius: 50%;
             display: flex;
@@ -471,21 +510,9 @@
             flex-shrink: 0;
         }
 
-        .district-card:hover .district-arrow {
-            background: var(--card-color);
-            transform: translateX(3px);
-        }
-
-        .district-arrow svg {
-            width: 12px;
-            height: 12px;
-            stroke: var(--text-muted);
-            transition: stroke 0.3s ease;
-        }
-
-        .district-card:hover .district-arrow svg {
-            stroke: var(--bg-primary);
-        }
+        .district-card:hover .district-arrow { background: var(--card-color); transform: translateX(3px); }
+        .district-arrow svg { width: 14px; height: 14px; stroke: var(--text-muted); transition: stroke 0.3s ease; }
+        .district-card:hover .district-arrow svg { stroke: var(--bg-primary); }
 
         .district-stats {
             display: grid;
@@ -495,9 +522,7 @@
             border-top: 1px solid var(--border-color);
         }
 
-        .district-stat {
-            text-align: center;
-        }
+        .district-stat { text-align: center; }
 
         .district-stat-value {
             font-family: 'JetBrains Mono', monospace;
@@ -506,16 +531,8 @@
             color: var(--text-primary);
         }
 
-        .district-stat-value.highlight {
-            color: var(--card-color);
-        }
-
-        .district-stat-label {
-            font-size: 9px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            margin-top: 2px;
-        }
+        .district-stat-value.highlight { color: var(--card-color); }
+        .district-stat-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
 
         /* Footer */
         .footer {
@@ -527,26 +544,10 @@
             align-items: center;
         }
 
-        .footer-text {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 16px;
-        }
-
-        .footer-links a {
-            font-size: 11px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: var(--accent-cyan);
-        }
+        .footer-text { font-size: 11px; color: var(--text-muted); }
+        .footer-links { display: flex; gap: 16px; }
+        .footer-links a { font-size: 11px; color: var(--text-secondary); text-decoration: none; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--accent-cyan); }
 
         /* Responsive */
         @media (max-width: 1200px) {
@@ -565,6 +566,7 @@
             .stats-grid { grid-template-columns: 1fr; }
             .districts-grid { grid-template-columns: 1fr; }
             .zoning-chart { grid-template-columns: 1fr; }
+            .filter-banner { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
@@ -572,28 +574,28 @@
     <div class="bg-pattern"></div>
     
     <main class="main" id="app">
-        <!-- Hero -->
         <section class="hero">
             <div class="badge">
                 <span class="badge-dot"></span>
                 <span>2023-2025 Construction Monitoring • <span id="province-count">4</span> Provinces • <span id="district-count">9</span> Districts</span>
             </div>
-            <h1 class="title">
-                National <span class="title-gradient">Construction</span> Compliance Monitoring
-            </h1>
-            <p class="subtitle">
-                AI-powered spatial analysis detecting building compliance across Rwanda. 
-                Transforming satellite imagery into actionable enforcement Insights.
-            </p>
+            <h1 class="title">National <span class="title-gradient">Construction</span> Compliance Monitoring</h1>
+            <p class="subtitle">AI-powered spatial analysis detecting building compliance across Rwanda. Transforming satellite imagery into actionable enforcement Insights.</p>
         </section>
 
-        <!-- National Stats -->
+        <div class="filter-banner" id="filter-banner">
+            <span class="filter-banner-text">Filtering by: <span class="filter-banner-value" id="filter-value"></span></span>
+            <button class="filter-banner-clear" id="filter-clear">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                Clear Filter
+            </button>
+        </div>
+
         <section>
             <div class="section-header">
                 <h2 class="section-title">National Overview</h2>
                 <span class="section-meta">Last updated: <span id="last-updated">--</span></span>
             </div>
-
             <div class="stats-grid">
                 <div class="stat-card cyan">
                     <div class="stat-label">Total Detected</div>
@@ -623,14 +625,15 @@
             </div>
         </section>
 
-        <!-- Charts Section -->
         <section class="charts-section">
             <div class="charts-grid">
-                <!-- Illegal by District -->
-                <div class="chart-card">
+                <div class="chart-card" id="district-chart-card">
                     <div class="chart-header">
                         <div>
-                            <div class="chart-title">Illegal Constructions by District</div>
+                            <div class="chart-title-wrapper">
+                                <div class="chart-title">Illegal Constructions by District</div>
+                                <span class="chart-interactive-hint">Click to filter</span>
+                            </div>
                             <div class="chart-subtitle">Enforcement priority ranking</div>
                         </div>
                         <div class="chart-total">
@@ -638,66 +641,55 @@
                             <div class="chart-total-label">Total Illegal</div>
                         </div>
                     </div>
-                    <div class="serial-chart" id="district-chart">
-                        <!-- Populated by JS -->
-                    </div>
+                    <div class="serial-chart" id="district-chart"></div>
                 </div>
 
-                <!-- Illegal by Province -->
-                <div class="chart-card">
+                <div class="chart-card" id="province-chart-card">
                     <div class="chart-header">
                         <div>
-                            <div class="chart-title">Illegal Constructions by Province</div>
+                            <div class="chart-title-wrapper">
+                                <div class="chart-title">Illegal Constructions by Province</div>
+                                <span class="chart-interactive-hint">Click to filter</span>
+                            </div>
                             <div class="chart-subtitle">Provincial enforcement priority</div>
                         </div>
                     </div>
-                    <div class="serial-chart" id="province-chart">
-                        <!-- Populated by JS -->
-                    </div>
+                    <div class="serial-chart" id="province-chart"></div>
                 </div>
 
-                <!-- Illegal by Zoning -->
-                <div class="chart-card full-width">
+                <div class="chart-card full-width" id="zoning-chart-card">
                     <div class="chart-header">
                         <div>
-                            <div class="chart-title">Illegal Constructions by Zoning Classification</div>
-                            <div class="chart-subtitle"></div>
+                            <div class="chart-title-wrapper">
+                                <div class="chart-title">Illegal Constructions by Zoning Classification</div>
+                                <span class="chart-interactive-hint">Click to filter</span>
+                            </div>
                         </div>
                         <div class="chart-total">
                             <div class="chart-total-value" id="chart-zoning-total">--</div>
                             <div class="chart-total-label">Total Illegal</div>
                         </div>
                     </div>
-                    <div class="zoning-chart" id="zoning-chart">
-                        <!-- Populated by JS -->
-                    </div>
+                    <div class="zoning-chart" id="zoning-chart"></div>
                 </div>
             </div>
         </section>
 
-        <!-- Districts -->
         <section class="districts-section">
             <div class="section-header">
                 <h2 class="section-title">Explore by District</h2>
-                <span class="section-meta">Sorted by enforcement priority</span>
+                <span class="section-meta">Click card to navigate • Sorted by enforcement priority</span>
             </div>
-
-            <div class="districts-grid" id="districts-grid">
-                <!-- Populated by JS -->
-            </div>
+            <div class="districts-grid" id="districts-grid"></div>
         </section>
 
-        <!-- Footer -->
         <footer class="footer">
             <span class="footer-text">Rwanda Construction Inspection Platform</span>
-            <div class="footer-links">
-                <a href="#">National Land Authority</a>
-            </div>
+            <div class="footer-links"><a href="#">National Land Authority</a></div>
         </footer>
     </main>
 
     <script>
-        // Configuration
         const DATA_URL = 'https://gilbert-uwonkunda.github.io/UI/construction_stats.json';
         const APP_ID = '91d3be1350b746e08990f6c75fbb1c62';
         const EXB_BASE_URL = 'https://geodata.rw/portal/apps/experiencebuilder/experience/';
@@ -710,36 +702,143 @@
         };
 
         const DISTRICT_PAGES = {
-            'Bugesera': 'Eastern-Province',
-            'Rubavu': 'Western-Province',
-            'Nyagatare': 'Eastern-Province',
-            'Huye': 'Southern-Province',
-            'Rusizi': 'Western-Province',
-            'Kayonza': 'Eastern-Province',
-            'Kirehe': 'Eastern-Province',
-            'Musanze': 'Northern-Province',
-            'Rwamagana': 'Eastern-Province'
+            'Bugesera': 'Eastern-Province', 'Rubavu': 'Western-Province', 'Nyagatare': 'Eastern-Province',
+            'Huye': 'Southern-Province', 'Rusizi': 'Western-Province', 'Kayonza': 'Eastern-Province',
+            'Kirehe': 'Eastern-Province', 'Musanze': 'Northern-Province', 'Rwamagana': 'Eastern-Province'
         };
 
         const ZONING_LABELS = {
-            'R1A': 'Low Density',
-            'A1': 'Agriculture',
-            'R1B': 'Rural Residential',
-            'R3': 'Medium Expansion',
-            'R2': 'Medium Density',
-            'C1': 'Mixed Commercial',
-            'T1': 'Road Reserve',
-            'C3': 'City Commercial',
-            'R1': 'Residential',
-            'R4': 'High Density',
-            'PF1': 'Public Facilities'
+            'R1A': 'Low Density', 'A1': 'Agriculture', 'R1B': 'Rural Residential', 'R3': 'Medium Expansion',
+            'R2': 'Medium Density', 'C1': 'Mixed Commercial', 'T1': 'Road Reserve', 'C3': 'City Commercial',
+            'R1': 'Residential', 'R4': 'High Density', 'PF1': 'Public Facilities'
         };
 
-        // Utility functions
+        let allData = null;
+        let activeFilter = { type: null, value: null };
+
         const formatNumber = (num) => num?.toLocaleString() ?? '--';
         const formatK = (num) => num >= 1000 ? (num/1000).toFixed(1) + 'K' : num?.toString() ?? '--';
 
-        // Render functions
+        function setFilter(type, value) {
+            if (activeFilter.type === type && activeFilter.value === value) {
+                clearFilter();
+                return;
+            }
+            activeFilter = { type, value };
+            applyFilter();
+        }
+
+        function clearFilter() {
+            activeFilter = { type: null, value: null };
+            applyFilter();
+        }
+
+        function applyFilter() {
+            const banner = document.getElementById('filter-banner');
+            const filterValue = document.getElementById('filter-value');
+            
+            if (activeFilter.type) {
+                banner.classList.add('active');
+                let label = '';
+                if (activeFilter.type === 'district') label = `District: ${activeFilter.value}`;
+                else if (activeFilter.type === 'province') label = `Province: ${activeFilter.value}`;
+                else if (activeFilter.type === 'zoning') label = `Zoning: ${activeFilter.value} (${ZONING_LABELS[activeFilter.value] || activeFilter.value})`;
+                filterValue.textContent = label;
+                updateFilteredStats();
+            } else {
+                banner.classList.remove('active');
+                renderStats(allData);
+            }
+            updateChartStates();
+            updateDistrictCards();
+        }
+
+        function updateFilteredStats() {
+            if (!activeFilter.type || !allData) return;
+            
+            if (activeFilter.type === 'zoning') {
+                const zoningData = allData.zoning.find(z => z.code === activeFilter.value);
+                if (zoningData) {
+                    document.getElementById('stat-total').textContent = '--';
+                    document.getElementById('stat-legal').textContent = '--';
+                    document.getElementById('stat-illegal').textContent = formatNumber(zoningData.illegal);
+                    document.getElementById('stat-existing').textContent = '--';
+                    document.getElementById('stat-compliance').textContent = '--';
+                    document.getElementById('stat-compliance-detail').textContent = `Zone ${activeFilter.value}`;
+                }
+                return;
+            }
+
+            let filteredDistricts = activeFilter.type === 'district' 
+                ? allData.districts.filter(d => d.district === activeFilter.value)
+                : allData.districts.filter(d => d.province === activeFilter.value);
+            
+            if (filteredDistricts.length > 0) {
+                const total = filteredDistricts.reduce((sum, d) => sum + d.total, 0);
+                const legal = filteredDistricts.reduce((sum, d) => sum + d.legal, 0);
+                const illegal = filteredDistricts.reduce((sum, d) => sum + d.illegal, 0);
+                const existing = filteredDistricts.reduce((sum, d) => sum + d.existing, 0);
+                const compliance = (legal + illegal) > 0 ? ((legal / (legal + illegal)) * 100).toFixed(1) : 0;
+                
+                document.getElementById('stat-total').textContent = formatNumber(total);
+                document.getElementById('stat-legal').textContent = formatNumber(legal);
+                document.getElementById('stat-illegal').textContent = formatNumber(illegal);
+                document.getElementById('stat-existing').textContent = formatNumber(existing);
+                document.getElementById('stat-compliance').textContent = compliance + '%';
+                document.getElementById('stat-compliance-detail').textContent = `${formatNumber(legal)} of ${formatNumber(legal + illegal)}`;
+            }
+        }
+
+        function updateChartStates() {
+            document.querySelectorAll('#district-chart .chart-bar-row').forEach(row => {
+                const district = row.dataset.district;
+                row.classList.remove('active', 'dimmed');
+                if (activeFilter.type === 'district') {
+                    row.classList.add(activeFilter.value === district ? 'active' : 'dimmed');
+                } else if (activeFilter.type === 'province') {
+                    const d = allData.districts.find(d => d.district === district);
+                    if (d) row.classList.add(d.province === activeFilter.value ? 'active' : 'dimmed');
+                }
+            });
+
+            document.querySelectorAll('#province-chart .chart-bar-row').forEach(row => {
+                const province = row.dataset.province;
+                row.classList.remove('active', 'dimmed');
+                if (activeFilter.type === 'province') {
+                    row.classList.add(activeFilter.value === province ? 'active' : 'dimmed');
+                } else if (activeFilter.type === 'district') {
+                    const d = allData.districts.find(d => d.district === activeFilter.value);
+                    if (d) row.classList.add(d.province === province ? 'active' : 'dimmed');
+                }
+            });
+
+            document.querySelectorAll('#zoning-chart .zoning-bar-row').forEach(row => {
+                row.classList.remove('active', 'dimmed');
+                if (activeFilter.type === 'zoning') {
+                    row.classList.add(activeFilter.value === row.dataset.zoning ? 'active' : 'dimmed');
+                }
+            });
+
+            document.getElementById('district-chart-card').classList.toggle('has-filter', activeFilter.type === 'district');
+            document.getElementById('province-chart-card').classList.toggle('has-filter', activeFilter.type === 'province');
+            document.getElementById('zoning-chart-card').classList.toggle('has-filter', activeFilter.type === 'zoning');
+        }
+
+        function updateDistrictCards() {
+            document.querySelectorAll('.district-card').forEach(card => {
+                const district = card.dataset.district;
+                const d = allData.districts.find(d => d.district === district);
+                card.classList.remove('filtered-out', 'highlighted');
+                if (!activeFilter.type) return;
+                
+                if (activeFilter.type === 'district') {
+                    card.classList.add(district === activeFilter.value ? 'highlighted' : 'filtered-out');
+                } else if (activeFilter.type === 'province' && d) {
+                    card.classList.add(d.province === activeFilter.value ? 'highlighted' : 'filtered-out');
+                }
+            });
+        }
+
         function renderStats(data) {
             const n = data.national;
             document.getElementById('stat-total').textContent = formatNumber(n.total);
@@ -757,101 +856,78 @@
             const container = document.getElementById('district-chart');
             const maxIllegal = Math.max(...districts.map(d => d.illegal));
             const totalIllegal = districts.reduce((sum, d) => sum + d.illegal, 0);
-            
             document.getElementById('chart-district-total').textContent = formatNumber(totalIllegal);
             
-            // Filter out districts with 0 illegal
-            const filtered = districts.filter(d => d.illegal > 0);
-            
-            container.innerHTML = filtered.map((d, i) => {
-                const width = (d.illegal / maxIllegal * 100).toFixed(1);
-                const intensity = Math.floor(255 - (i * 20));
-                const color = `rgb(255, ${Math.min(intensity, 240)}, ${Math.min(intensity, 240)})`;
-                const isDark = i > 4;
-                
-                return `
-                    <div class="chart-bar-row">
-                        <span class="chart-bar-label">${d.district}</span>
-                        <div class="chart-bar-container">
-                            <div class="chart-bar-fill" style="width: ${width}%; background: ${color};">
-                                <span class="chart-bar-value ${isDark ? 'dark' : ''}">${formatNumber(d.illegal)}</span>
-                            </div>
+            container.innerHTML = districts.filter(d => d.illegal > 0).map((d, i) => {
+                const width = Math.max((d.illegal / maxIllegal * 100), 15).toFixed(1);
+                const intensity = Math.min(100 + (i * 15), 200);
+                return `<div class="chart-bar-row" data-district="${d.district}">
+                    <span class="chart-bar-label">${d.district}</span>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar-fill" style="width: ${width}%; background: rgb(255, ${intensity}, ${intensity});">
+                            <span class="chart-bar-value">${formatNumber(d.illegal)}</span>
                         </div>
                     </div>
-                `;
+                </div>`;
             }).join('');
+            
+            container.querySelectorAll('.chart-bar-row').forEach(row => {
+                row.addEventListener('click', () => setFilter('district', row.dataset.district));
+            });
         }
 
         function renderProvinceChart(provinces) {
             const container = document.getElementById('province-chart');
-            const sorted = Object.entries(provinces)
-                .map(([name, data]) => ({ name, ...data }))
-                .sort((a, b) => b.illegal - a.illegal);
-            
+            const sorted = Object.entries(provinces).map(([name, data]) => ({ name, ...data })).sort((a, b) => b.illegal - a.illegal);
             const maxIllegal = Math.max(...sorted.map(p => p.illegal));
             
             container.innerHTML = sorted.map(p => {
-                const width = (p.illegal / maxIllegal * 100).toFixed(1);
+                const width = Math.max((p.illegal / maxIllegal * 100), 20).toFixed(1);
                 const config = PROVINCE_COLORS[p.name] || { bg: '#666' };
-                const isDark = ['Eastern', 'Southern', 'Northern'].includes(p.name);
-                
-                return `
-                    <div class="chart-bar-row">
-                        <span class="chart-bar-label">${p.name}</span>
-                        <div class="chart-bar-container">
-                            <div class="chart-bar-fill" style="width: ${width}%; background: ${config.bg};">
-                                <span class="chart-bar-value ${isDark ? 'dark' : ''}">${formatNumber(p.illegal)}</span>
-                            </div>
+                return `<div class="chart-bar-row" data-province="${p.name}">
+                    <span class="chart-bar-label">${p.name}</span>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar-fill" style="width: ${width}%; background: ${config.bg};">
+                            <span class="chart-bar-value">${formatNumber(p.illegal)}</span>
                         </div>
                     </div>
-                `;
+                </div>`;
             }).join('');
+            
+            container.querySelectorAll('.chart-bar-row').forEach(row => {
+                row.addEventListener('click', () => setFilter('province', row.dataset.province));
+            });
         }
 
         function renderZoningChart(zoning, nationalIllegal) {
             const container = document.getElementById('zoning-chart');
             const maxIllegal = Math.max(...zoning.map(z => z.illegal));
-            
-            // Use national total for consistency, not sum of top 12
             document.getElementById('chart-zoning-total').textContent = formatNumber(nationalIllegal);
             
             const half = Math.ceil(zoning.length / 2);
-            const leftColumn = zoning.slice(0, half);
-            const rightColumn = zoning.slice(half);
-            
-            const lightColors = ['#ffec18', '#ffebb0', '#ffbb36', '#b2b2b2', '#ffff7f'];
+            const lightColors = ['#ffec18', '#ffebb0', '#ffbb36', '#b2b2b2', '#ffff7f', '#ffea00'];
             
             const renderColumn = (items) => items.map(z => {
-                const width = (z.illegal / maxIllegal * 100).toFixed(1);
-                const isDark = lightColors.includes(z.color);
-                
-                return `
-                    <div class="zoning-bar-row">
-                        <span class="zoning-bar-label">${z.code}</span>
-                        <div class="zoning-bar-container">
-                            <div class="zoning-bar-fill" style="width: ${width}%; background: ${z.color};">
-                                <span class="zoning-bar-value" style="color: ${isDark ? '#1a1a2e' : '#fff'};">${formatNumber(z.illegal)}</span>
-                            </div>
+                const width = Math.max((z.illegal / maxIllegal * 100), 15).toFixed(1);
+                const isDark = lightColors.some(c => z.color.toLowerCase().includes(c.slice(1).toLowerCase()));
+                return `<div class="zoning-bar-row" data-zoning="${z.code}">
+                    <span class="zoning-bar-label">${z.code}</span>
+                    <div class="zoning-bar-container">
+                        <div class="zoning-bar-fill" style="width: ${width}%; background: ${z.color};">
+                            <span class="zoning-bar-value" style="color: ${isDark ? '#0d1520' : '#fff'};">${formatNumber(z.illegal)}</span>
                         </div>
                     </div>
-                `;
+                </div>`;
             }).join('');
             
-            // Build legend from top 4 zones
-            const legendItems = zoning.slice(0, 4).map(z => `
-                <span class="zoning-legend-item">
-                    <span class="zoning-legend-color" style="background: ${z.color};"></span>
-                    ${z.code}: ${ZONING_LABELS[z.code] || z.code}
-                </span>
-            `).join('');
+            const legendItems = zoning.slice(0, 4).map(z => `<span class="zoning-legend-item"><span class="zoning-legend-color" style="background: ${z.color};"></span>${z.code}: ${ZONING_LABELS[z.code] || z.code}</span>`).join('');
             
-            container.innerHTML = `
-                <div class="zoning-column">${renderColumn(leftColumn)}</div>
-                <div class="zoning-column">
-                    ${renderColumn(rightColumn)}
-                    <div class="zoning-legend">${legendItems}</div>
-                </div>
-            `;
+            container.innerHTML = `<div class="zoning-column">${renderColumn(zoning.slice(0, half))}</div>
+                <div class="zoning-column">${renderColumn(zoning.slice(half))}<div class="zoning-legend">${legendItems}</div></div>`;
+            
+            container.querySelectorAll('.zoning-bar-row').forEach(row => {
+                row.addEventListener('click', () => setFilter('zoning', row.dataset.zoning));
+            });
         }
 
         function renderDistrictCards(districts) {
@@ -859,66 +935,48 @@
             
             container.innerHTML = districts.map((d, i) => {
                 const config = PROVINCE_COLORS[d.province] || { class: '' };
-                const priority = d.illegal > 0 ? `#${i + 1} Priority` : 'Pending';
                 const showPriority = i < 5 && d.illegal > 0;
-                
-                return `
-                    <a href="#" class="district-card ${config.class}" data-district="${d.district}">
-                        <div class="district-header">
-                            <div>
-                                <div class="district-name">${d.district}</div>
-                                <div class="district-province">${d.province}${showPriority ? ' • ' + priority : (d.illegal === 0 ? ' • Pending' : '')}</div>
-                            </div>
-                            <div class="district-arrow">
-                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                                </svg>
-                            </div>
+                return `<a href="#" class="district-card ${config.class}" data-district="${d.district}" data-page="${DISTRICT_PAGES[d.district] || ''}">
+                    <div class="district-header">
+                        <div>
+                            <div class="district-name">${d.district}</div>
+                            <div class="district-province">${d.province}${showPriority ? ' • #' + (i + 1) + ' Priority' : (d.illegal === 0 ? ' • Pending' : '')}</div>
                         </div>
-                        <div class="district-stats">
-                            <div class="district-stat">
-                                <div class="district-stat-value">${formatK(d.total)}</div>
-                                <div class="district-stat-label">Total</div>
-                            </div>
-                            <div class="district-stat">
-                                <div class="district-stat-value">${formatNumber(d.illegal)}</div>
-                                <div class="district-stat-label">Illegal</div>
-                            </div>
-                            <div class="district-stat">
-                                <div class="district-stat-value highlight">${d.compliance > 0 ? d.compliance + '%' : '—'}</div>
-                                <div class="district-stat-label">Compliance</div>
-                            </div>
+                        <div class="district-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                         </div>
-                    </a>
-                `;
+                    </div>
+                    <div class="district-stats">
+                        <div class="district-stat"><div class="district-stat-value">${formatK(d.total)}</div><div class="district-stat-label">Total</div></div>
+                        <div class="district-stat"><div class="district-stat-value">${formatNumber(d.illegal)}</div><div class="district-stat-label">Illegal</div></div>
+                        <div class="district-stat"><div class="district-stat-value highlight">${d.compliance > 0 ? d.compliance + '%' : '—'}</div><div class="district-stat-label">Compliance</div></div>
+                    </div>
+                </a>`;
             }).join('');
             
-            // Add click handlers
             container.querySelectorAll('.district-card').forEach(card => {
                 card.addEventListener('click', (e) => {
                     e.preventDefault();
-                    const district = card.dataset.district;
-                    const page = DISTRICT_PAGES[district];
+                    const page = card.dataset.page;
                     if (page) {
-                        const url = `${EXB_BASE_URL}?id=${APP_ID}&page=${page}&views=${district}`;
-                        window.parent.location.href = url;
+                        const url = `${EXB_BASE_URL}?id=${APP_ID}&page=${page}&views=${card.dataset.district}`;
+                        if (window.parent !== window) window.parent.location.href = url;
+                        else window.location.href = url;
                     }
                 });
             });
         }
 
-        // Load and render data
         async function loadData() {
             try {
-                const response = await fetch(DATA_URL + '?t=' + Date.now()); // Cache bust
-                const data = await response.json();
-                
-                renderStats(data);
-                renderDistrictChart(data.districts);
-                renderProvinceChart(data.provinces);
-                renderZoningChart(data.zoning, data.national.illegal);
-                renderDistrictCards(data.districts);
-                
+                const response = await fetch(DATA_URL + '?t=' + Date.now());
+                allData = await response.json();
+                renderStats(allData);
+                renderDistrictChart(allData.districts);
+                renderProvinceChart(allData.provinces);
+                renderZoningChart(allData.zoning, allData.national.illegal);
+                renderDistrictCards(allData.districts);
+                document.getElementById('filter-clear').addEventListener('click', clearFilter);
                 document.getElementById('app').classList.remove('loading');
             } catch (error) {
                 console.error('Failed to load data:', error);
@@ -926,7 +984,6 @@
             }
         }
 
-        // Initialize
         document.getElementById('app').classList.add('loading');
         loadData();
     </script>
