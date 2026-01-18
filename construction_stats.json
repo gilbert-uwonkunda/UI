@@ -1,108 +1,108 @@
 {
-  "updated": "2026-01-15 11:14",
+  "updated": "2026-01-18 17:54",
   "national": {
-    "total": 1533173,
-    "legal": 2315,
-    "illegal": 90131,
-    "existing": 1428467,
-    "demolished": 12260,
-    "compliance": 2.5
+    "total": 1717619,
+    "legal": 5766,
+    "illegal": 58760,
+    "existing": 1653093,
+    "demolished": 0,
+    "compliance": 8.9
   },
   "provinces": {
-    "Western": {
+    "Eastern Province": {
+      "total": 1040237,
+      "legal": 2365,
+      "illegal": 22286,
+      "compliance": 9.6
+    },
+    "Western Province": {
       "total": 301673,
-      "legal": 800,
-      "illegal": 25637,
-      "compliance": 3.0
+      "legal": 1171,
+      "illegal": 25252,
+      "compliance": 4.4
     },
-    "Eastern": {
-      "total": 855791,
-      "legal": 1254,
-      "illegal": 51303,
-      "compliance": 2.4
-    },
-    "Northern": {
-      "total": 183188,
-      "legal": 133,
-      "illegal": 3877,
-      "compliance": 3.3
-    },
-    "Southern": {
+    "Southern Province": {
       "total": 192521,
-      "legal": 128,
-      "illegal": 9314,
-      "compliance": 1.4
+      "legal": 1555,
+      "illegal": 7887,
+      "compliance": 16.5
+    },
+    "Northern Province": {
+      "total": 183188,
+      "legal": 675,
+      "illegal": 3335,
+      "compliance": 16.8
     }
   },
   "districts": [
     {
-      "province": "Eastern",
-      "district": "Bugesera",
-      "total": 117703,
-      "legal": 862,
-      "illegal": 27044,
-      "compliance": 3.1
-    },
-    {
-      "province": "Western",
+      "province": "Western Province",
       "district": "Rubavu",
       "total": 106180,
-      "legal": 786,
-      "illegal": 17059,
-      "compliance": 4.4
+      "legal": 1140,
+      "illegal": 16691,
+      "compliance": 6.4
     },
     {
-      "province": "Eastern",
+      "province": "Eastern Province",
       "district": "Nyagatare",
       "total": 280116,
-      "legal": 164,
-      "illegal": 10777,
-      "compliance": 1.5
+      "legal": 1968,
+      "illegal": 8973,
+      "compliance": 18.0
     },
     {
-      "province": "Southern",
-      "district": "Huye",
-      "total": 192521,
-      "legal": 128,
-      "illegal": 9314,
-      "compliance": 1.4
-    },
-    {
-      "province": "Western",
+      "province": "Western Province",
       "district": "Rusizi",
       "total": 195493,
-      "legal": 14,
-      "illegal": 8578,
-      "compliance": 0.2
+      "legal": 31,
+      "illegal": 8561,
+      "compliance": 0.4
     },
     {
-      "province": "Eastern",
+      "province": "Southern Province",
+      "district": "Huye",
+      "total": 192521,
+      "legal": 1555,
+      "illegal": 7887,
+      "compliance": 16.5
+    },
+    {
+      "province": "Eastern Province",
       "district": "Kayonza",
-      "total": 196356,
-      "legal": 101,
-      "illegal": 7719,
-      "compliance": 1.3
+      "total": 198427,
+      "legal": 197,
+      "illegal": 7623,
+      "compliance": 2.5
     },
     {
-      "province": "Eastern",
+      "province": "Eastern Province",
       "district": "Kirehe",
-      "total": 220616,
-      "legal": 127,
-      "illegal": 5763,
-      "compliance": 2.2
+      "total": 222270,
+      "legal": 200,
+      "illegal": 5690,
+      "compliance": 3.4
     },
     {
-      "province": "Northern",
+      "province": "Northern Province",
       "district": "Musanze",
       "total": 183188,
-      "legal": 133,
-      "illegal": 3877,
-      "compliance": 3.3
+      "legal": 675,
+      "illegal": 3335,
+      "compliance": 16.8
     },
     {
-      "province": "Eastern",
+      "province": "Eastern Province",
+      "district": "Bugesera",
+      "total": 117703,
+      "legal": 0,
+      "illegal": 0,
+      "compliance": 0
+    },
+    {
+      "province": "Eastern Province",
       "district": "Rwamagana",
-      "total": 41000,
+      "total": 221721,
       "legal": 0,
       "illegal": 0,
       "compliance": 0
@@ -111,62 +111,62 @@
   "zoning": [
     {
       "code": "R1A",
-      "illegal": 17381,
+      "illegal": 13331,
       "color": "#ffec18"
     },
     {
+      "code": "R3",
+      "illegal": 8588,
+      "color": "#ff7f00"
+    },
+    {
       "code": "A1",
-      "illegal": 17116,
+      "illegal": 8273,
       "color": "#6e8131"
     },
     {
       "code": "R1B",
-      "illegal": 12582,
+      "illegal": 7365,
       "color": "#ffebb0"
     },
     {
-      "code": "R3",
-      "illegal": 11190,
-      "color": "#ff7f00"
-    },
-    {
-      "code": "R2",
-      "illegal": 8191,
-      "color": "#ffbb36"
-    },
-    {
       "code": "C1",
-      "illegal": 6792,
+      "illegal": 4725,
       "color": "#cc3366"
     },
     {
+      "code": "R2",
+      "illegal": 4242,
+      "color": "#ffbb36"
+    },
+    {
       "code": "T1",
-      "illegal": 2435,
+      "illegal": 1476,
       "color": "#b2b2b2"
     },
     {
-      "code": "C3",
-      "illegal": 1852,
-      "color": "#960202"
-    },
-    {
       "code": "R1",
-      "illegal": 1779,
+      "illegal": 1339,
       "color": "#ffff7f"
     },
     {
+      "code": "C3",
+      "illegal": 1297,
+      "color": "#960202"
+    },
+    {
       "code": "R4",
-      "illegal": 1737,
+      "illegal": 1271,
       "color": "#ff5a25"
     },
     {
-      "code": "PF1",
-      "illegal": 1602,
-      "color": "#003fff"
+      "code": "F5",
+      "illegal": 1158,
+      "color": "#666666"
     },
     {
       "code": "ET",
-      "illegal": 1593,
+      "illegal": 1141,
       "color": "#888888"
     }
   ]
