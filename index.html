@@ -777,7 +777,8 @@
                 const total = filteredDistricts.reduce((sum, d) => sum + d.total, 0);
                 const legal = filteredDistricts.reduce((sum, d) => sum + d.legal, 0);
                 const illegal = filteredDistricts.reduce((sum, d) => sum + d.illegal, 0);
-                const existing = filteredDistricts.reduce((sum, d) => sum + d.existing, 0);
+                // Existing is calculated as: total - legal - illegal (since districts don't have existing field)
+                const existing = total - legal - illegal;
                 const compliance = (legal + illegal) > 0 ? ((legal / (legal + illegal)) * 100).toFixed(1) : 0;
                 
                 document.getElementById('stat-total').textContent = formatNumber(total);
