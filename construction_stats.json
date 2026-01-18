@@ -1,37 +1,41 @@
 {
-  "updated": "2026-01-18 17:54",
+  "updated": "2026-01-18 22:06",
   "national": {
     "total": 1717619,
     "legal": 5766,
     "illegal": 58760,
     "existing": 1653093,
     "demolished": 0,
-    "compliance": 8.9
+    "compliance": 0
   },
   "provinces": {
     "Eastern Province": {
       "total": 1040237,
       "legal": 2365,
       "illegal": 22286,
-      "compliance": 9.6
+      "compliance": 9.6,
+      "total_unique_zones": 38
     },
     "Western Province": {
       "total": 301673,
       "legal": 1171,
       "illegal": 25252,
-      "compliance": 4.4
+      "compliance": 4.4,
+      "total_unique_zones": 36
     },
     "Southern Province": {
       "total": 192521,
       "legal": 1555,
       "illegal": 7887,
-      "compliance": 16.5
+      "compliance": 16.5,
+      "total_unique_zones": 27
     },
     "Northern Province": {
       "total": 183188,
       "legal": 675,
       "illegal": 3335,
-      "compliance": 16.8
+      "compliance": 16.8,
+      "total_unique_zones": 32
     }
   },
   "districts": [
@@ -41,7 +45,8 @@
       "total": 106180,
       "legal": 1140,
       "illegal": 16691,
-      "compliance": 6.4
+      "compliance": 6.4,
+      "total_unique_zones": 33
     },
     {
       "province": "Eastern Province",
@@ -49,7 +54,8 @@
       "total": 280116,
       "legal": 1968,
       "illegal": 8973,
-      "compliance": 18.0
+      "compliance": 18.0,
+      "total_unique_zones": 28
     },
     {
       "province": "Western Province",
@@ -57,7 +63,8 @@
       "total": 195493,
       "legal": 31,
       "illegal": 8561,
-      "compliance": 0.4
+      "compliance": 0.4,
+      "total_unique_zones": 35
     },
     {
       "province": "Southern Province",
@@ -65,7 +72,8 @@
       "total": 192521,
       "legal": 1555,
       "illegal": 7887,
-      "compliance": 16.5
+      "compliance": 16.5,
+      "total_unique_zones": 27
     },
     {
       "province": "Eastern Province",
@@ -73,7 +81,8 @@
       "total": 198427,
       "legal": 197,
       "illegal": 7623,
-      "compliance": 2.5
+      "compliance": 2.5,
+      "total_unique_zones": 34
     },
     {
       "province": "Eastern Province",
@@ -81,7 +90,8 @@
       "total": 222270,
       "legal": 200,
       "illegal": 5690,
-      "compliance": 3.4
+      "compliance": 3.4,
+      "total_unique_zones": 33
     },
     {
       "province": "Northern Province",
@@ -89,7 +99,8 @@
       "total": 183188,
       "legal": 675,
       "illegal": 3335,
-      "compliance": 16.8
+      "compliance": 16.8,
+      "total_unique_zones": 32
     },
     {
       "province": "Eastern Province",
@@ -97,7 +108,8 @@
       "total": 117703,
       "legal": 0,
       "illegal": 0,
-      "compliance": 0
+      "compliance": 0,
+      "total_unique_zones": 32
     },
     {
       "province": "Eastern Province",
@@ -105,7 +117,8 @@
       "total": 221721,
       "legal": 0,
       "illegal": 0,
-      "compliance": 0
+      "compliance": 0,
+      "total_unique_zones": 30
     }
   ],
   "zoning": [
