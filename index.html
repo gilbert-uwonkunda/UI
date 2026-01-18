@@ -118,6 +118,7 @@
             border-radius: 10px;
             margin-bottom: 20px;
             animation: slideDown 0.3s ease;
+            flex-wrap: wrap;
         }
 
         .filter-banner.active { display: flex; }
@@ -148,6 +149,90 @@
 
         .filter-banner-clear:hover { background: rgba(255, 82, 82, 0.3); transform: scale(1.02); }
         .filter-banner-clear svg { width: 14px; height: 14px; }
+
+        /* Zoning Breakdown Panel */
+        .zoning-breakdown {
+            display: none;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            animation: slideDown 0.3s ease;
+        }
+
+        .zoning-breakdown.active { display: block; }
+
+        .zoning-breakdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .zoning-breakdown-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .zoning-breakdown-title .zone-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .zoning-breakdown-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .zoning-district-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .zoning-district-item:hover {
+            background: var(--bg-card-hover);
+            transform: translateX(4px);
+        }
+
+        .zoning-district-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .zoning-district-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .zoning-district-province {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .zoning-district-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent-red);
+        }
 
         /* Section Header */
         .section-header {
@@ -472,7 +557,7 @@
 
         .district-card:hover::before { transform: scaleX(1); }
 
-        /* Compliance-based colors: <50% = red, 50-75% = yellow, >75% = green */
+        /* Compliance-based colors */
         .district-card.compliance-critical { --card-color: var(--accent-red); }
         .district-card.compliance-warning { --card-color: var(--accent-yellow); }
         .district-card.compliance-good { --card-color: var(--accent-green); }
@@ -550,11 +635,21 @@
         .footer-links a { font-size: 11px; color: var(--text-secondary); text-decoration: none; transition: color 0.3s; }
         .footer-links a:hover { color: var(--accent-cyan); }
 
+        /* Data unavailable message */
+        .data-unavailable {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-style: italic;
+        }
+
         /* Responsive */
         @media (max-width: 1200px) {
             .stats-grid { grid-template-columns: repeat(3, 1fr); }
             .districts-grid { grid-template-columns: repeat(3, 1fr); }
             .charts-grid { grid-template-columns: 1fr; }
+            .zoning-breakdown-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 900px) {
@@ -568,6 +663,7 @@
             .districts-grid { grid-template-columns: 1fr; }
             .zoning-chart { grid-template-columns: 1fr; }
             .filter-banner { flex-direction: column; text-align: center; }
+            .zoning-breakdown-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -590,6 +686,20 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
                 Clear Filter
             </button>
+        </div>
+
+        <!-- Zoning Breakdown Panel - Shows when zoning is clicked -->
+        <div class="zoning-breakdown" id="zoning-breakdown">
+            <div class="zoning-breakdown-header">
+                <div class="zoning-breakdown-title">
+                    <span>Illegal Constructions in Zone</span>
+                    <span class="zone-badge" id="zone-badge">--</span>
+                    <span>by District</span>
+                </div>
+            </div>
+            <div class="zoning-breakdown-grid" id="zoning-breakdown-grid">
+                <!-- Populated by JS -->
+            </div>
         </div>
 
         <section>
@@ -663,7 +773,7 @@
                         <div>
                             <div class="chart-title-wrapper">
                                 <div class="chart-title">Illegal Constructions by Zoning Classification</div>
-                                <span class="chart-interactive-hint">Click to filter</span>
+                                <span class="chart-interactive-hint">Click to see district breakdown</span>
                             </div>
                         </div>
                         <div class="chart-total">
@@ -718,25 +828,34 @@
             'Rulindo': 'Northern-Province'
         };
 
-        // Get compliance class based on rate
+        const ZONING_LABELS = {
+            'R1A': 'Low Density Residential',
+            'A1': 'Agriculture',
+            'R1B': 'Rural Residential',
+            'R3': 'Medium Expansion',
+            'R2': 'Medium Density',
+            'C1': 'Mixed Commercial',
+            'T1': 'Road Reserve',
+            'C3': 'City Commercial',
+            'R1': 'Residential',
+            'R4': 'High Density',
+            'PF1': 'Public Facilities',
+            'ET': 'Eco-Tourism'
+        };
+
+        let allData = null;
+        let activeFilter = { type: null, value: null };
+        let hasZoningByDistrict = false;
+
+        const formatNumber = (num) => num?.toLocaleString() ?? '--';
+        const formatK = (num) => num >= 1000 ? (num/1000).toFixed(1) + 'K' : num?.toString() ?? '--';
+
         function getComplianceClass(compliance) {
             if (compliance === 0) return 'compliance-pending';
             if (compliance < 50) return 'compliance-critical';
             if (compliance < 75) return 'compliance-warning';
             return 'compliance-good';
         }
-
-        const ZONING_LABELS = {
-            'R1A': 'Low Density', 'A1': 'Agriculture', 'R1B': 'Rural Residential', 'R3': 'Medium Expansion',
-            'R2': 'Medium Density', 'C1': 'Mixed Commercial', 'T1': 'Road Reserve', 'C3': 'City Commercial',
-            'R1': 'Residential', 'R4': 'High Density', 'PF1': 'Public Facilities'
-        };
-
-        let allData = null;
-        let activeFilter = { type: null, value: null };
-
-        const formatNumber = (num) => num?.toLocaleString() ?? '--';
-        const formatK = (num) => num >= 1000 ? (num/1000).toFixed(1) + 'K' : num?.toString() ?? '--';
 
         function setFilter(type, value) {
             if (activeFilter.type === type && activeFilter.value === value) {
@@ -750,26 +869,105 @@
         function clearFilter() {
             activeFilter = { type: null, value: null };
             applyFilter();
+            // Hide zoning breakdown
+            document.getElementById('zoning-breakdown').classList.remove('active');
         }
 
         function applyFilter() {
             const banner = document.getElementById('filter-banner');
             const filterValue = document.getElementById('filter-value');
+            const zoningBreakdown = document.getElementById('zoning-breakdown');
             
             if (activeFilter.type) {
                 banner.classList.add('active');
                 let label = '';
-                if (activeFilter.type === 'district') label = `District: ${activeFilter.value}`;
-                else if (activeFilter.type === 'province') label = `Province: ${activeFilter.value}`;
-                else if (activeFilter.type === 'zoning') label = `Zoning: ${activeFilter.value} (${ZONING_LABELS[activeFilter.value] || activeFilter.value})`;
+                if (activeFilter.type === 'district') {
+                    label = `District: ${activeFilter.value}`;
+                    zoningBreakdown.classList.remove('active');
+                } else if (activeFilter.type === 'province') {
+                    label = `Province: ${activeFilter.value}`;
+                    zoningBreakdown.classList.remove('active');
+                } else if (activeFilter.type === 'zoning') {
+                    const zoneName = ZONING_LABELS[activeFilter.value] || activeFilter.value;
+                    label = `Zoning: ${activeFilter.value} (${zoneName})`;
+                    // Show zoning breakdown panel
+                    renderZoningBreakdown(activeFilter.value);
+                }
                 filterValue.textContent = label;
                 updateFilteredStats();
             } else {
                 banner.classList.remove('active');
+                zoningBreakdown.classList.remove('active');
                 renderStats(allData);
             }
             updateChartStates();
             updateDistrictCards();
+        }
+
+        function renderZoningBreakdown(zoneCode) {
+            const panel = document.getElementById('zoning-breakdown');
+            const grid = document.getElementById('zoning-breakdown-grid');
+            const badge = document.getElementById('zone-badge');
+            
+            // Get zoning color
+            const zoningData = allData.zoning.find(z => z.code === zoneCode);
+            const zoneColor = zoningData ? zoningData.color : '#666';
+            const isLightColor = ['#ffec18', '#ffebb0', '#ffbb36', '#b2b2b2', '#ffff7f'].includes(zoneColor);
+            
+            badge.textContent = zoneCode;
+            badge.style.background = zoneColor;
+            badge.style.color = isLightColor ? '#0d1520' : '#fff';
+            
+            // Check if we have zoning breakdown by district
+            if (hasZoningByDistrict) {
+                // Build district breakdown from data
+                const districtBreakdown = allData.districts
+                    .filter(d => d.zoning && d.zoning[zoneCode] > 0)
+                    .map(d => ({
+                        district: d.district,
+                        province: d.province,
+                        illegal: d.zoning[zoneCode]
+                    }))
+                    .sort((a, b) => b.illegal - a.illegal);
+                
+                if (districtBreakdown.length > 0) {
+                    grid.innerHTML = districtBreakdown.map(d => `
+                        <div class="zoning-district-item" data-district="${d.district}">
+                            <div class="zoning-district-info">
+                                <span class="zoning-district-name">${d.district}</span>
+                                <span class="zoning-district-province">${d.province}</span>
+                            </div>
+                            <span class="zoning-district-value">${formatNumber(d.illegal)}</span>
+                        </div>
+                    `).join('');
+                    
+                    // Add click handlers to navigate
+                    grid.querySelectorAll('.zoning-district-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            const district = item.dataset.district;
+                            const page = DISTRICT_PAGES[district];
+                            if (page) {
+                                const url = `${EXB_BASE_URL}?id=${APP_ID}&page=${page}&views=${district}`;
+                                window.parent.location.href = url;
+                            }
+                        });
+                    });
+                    
+                    panel.classList.add('active');
+                } else {
+                    grid.innerHTML = '<div class="data-unavailable">No district data available for this zone</div>';
+                    panel.classList.add('active');
+                }
+            } else {
+                // No zoning by district data - show message with instructions
+                grid.innerHTML = `
+                    <div class="data-unavailable">
+                        <p>District-level zoning breakdown not available in current data.</p>
+                        <p style="margin-top: 8px; font-size: 11px;">To enable this feature, add a "zoning" object to each district in your JSON with zone codes and illegal counts.</p>
+                    </div>
+                `;
+                panel.classList.add('active');
+            }
         }
 
         function updateFilteredStats() {
@@ -796,7 +994,6 @@
                 const total = filteredDistricts.reduce((sum, d) => sum + d.total, 0);
                 const legal = filteredDistricts.reduce((sum, d) => sum + d.legal, 0);
                 const illegal = filteredDistricts.reduce((sum, d) => sum + d.illegal, 0);
-                // Existing is calculated as: total - legal - illegal (since districts don't have existing field)
                 const existing = total - legal - illegal;
                 const compliance = (legal + illegal) > 0 ? ((legal / (legal + illegal)) * 100).toFixed(1) : 0;
                 
@@ -855,6 +1052,10 @@
                     card.classList.add(district === activeFilter.value ? 'highlighted' : 'filtered-out');
                 } else if (activeFilter.type === 'province' && d) {
                     card.classList.add(d.province === activeFilter.value ? 'highlighted' : 'filtered-out');
+                } else if (activeFilter.type === 'zoning' && hasZoningByDistrict && d && d.zoning) {
+                    // Highlight districts that have this zoning type
+                    const hasZone = d.zoning[activeFilter.value] > 0;
+                    card.classList.add(hasZone ? 'highlighted' : 'filtered-out');
                 }
             });
         }
@@ -874,11 +1075,12 @@
 
         function renderDistrictChart(districts) {
             const container = document.getElementById('district-chart');
-            const maxIllegal = Math.max(...districts.map(d => d.illegal));
-            const totalIllegal = districts.reduce((sum, d) => sum + d.illegal, 0);
+            const sorted = [...districts].sort((a, b) => b.illegal - a.illegal);
+            const maxIllegal = Math.max(...sorted.map(d => d.illegal));
+            const totalIllegal = sorted.reduce((sum, d) => sum + d.illegal, 0);
             document.getElementById('chart-district-total').textContent = formatNumber(totalIllegal);
             
-            container.innerHTML = districts.filter(d => d.illegal > 0).map((d, i) => {
+            container.innerHTML = sorted.filter(d => d.illegal > 0).map((d, i) => {
                 const width = Math.max((d.illegal / maxIllegal * 100), 15).toFixed(1);
                 const intensity = Math.min(100 + (i * 15), 200);
                 return `<div class="chart-bar-row" data-district="${d.district}">
@@ -904,6 +1106,7 @@
             container.innerHTML = sorted.map(p => {
                 const width = Math.max((p.illegal / maxIllegal * 100), 20).toFixed(1);
                 const config = PROVINCE_COLORS[p.name] || { bg: '#666' };
+                // All province colors need dark text for readability
                 return `<div class="chart-bar-row" data-province="${p.name}">
                     <span class="chart-bar-label">${p.name}</span>
                     <div class="chart-bar-container">
@@ -952,16 +1155,17 @@
 
         function renderDistrictCards(districts) {
             const container = document.getElementById('districts-grid');
-            
-            // Sort by illegal count (enforcement priority)
             const sorted = [...districts].sort((a, b) => b.illegal - a.illegal);
             
             container.innerHTML = sorted.map((d, i) => {
                 const complianceClass = getComplianceClass(d.compliance);
                 const showPriority = i < 5 && d.illegal > 0;
+                const page = DISTRICT_PAGES[d.district];
+                // Build the full URL for the href
+                const navUrl = page ? `${EXB_BASE_URL}?id=${APP_ID}&page=${page}&views=${d.district}` : '#';
                 
                 return `
-                    <a href="#" class="district-card ${complianceClass}" data-district="${d.district}">
+                    <a href="${navUrl}" target="_top" class="district-card ${complianceClass}" data-district="${d.district}">
                         <div class="district-header">
                             <div>
                                 <div class="district-name">${d.district}</div>
@@ -990,30 +1194,22 @@
                     </a>
                 `;
             }).join('');
-            
-            // Add click handlers - using same pattern that worked for Musanze
-            container.querySelectorAll('.district-card').forEach(card => {
-                card.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const district = card.dataset.district;
-                    const page = DISTRICT_PAGES[district];
-                    if (page) {
-                        const url = `${EXB_BASE_URL}?id=${APP_ID}&page=${page}&views=${district}`;
-                        window.parent.location.href = url;
-                    }
-                });
-            });
         }
 
         async function loadData() {
             try {
                 const response = await fetch(DATA_URL + '?t=' + Date.now());
                 allData = await response.json();
+                
+                // Check if data has zoning breakdown by district
+                hasZoningByDistrict = allData.districts.some(d => d.zoning && Object.keys(d.zoning).length > 0);
+                
                 renderStats(allData);
                 renderDistrictChart(allData.districts);
                 renderProvinceChart(allData.provinces);
                 renderZoningChart(allData.zoning, allData.national.illegal);
                 renderDistrictCards(allData.districts);
+                
                 document.getElementById('filter-clear').addEventListener('click', clearFilter);
                 document.getElementById('app').classList.remove('loading');
             } catch (error) {
