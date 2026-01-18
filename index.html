@@ -847,14 +847,14 @@
         function updateDistrictCards() {
             document.querySelectorAll('.district-card').forEach(card => {
                 const district = card.dataset.district;
-                const province = card.dataset.province;
+                const d = allData.districts.find(x => x.district === district);
                 card.classList.remove('filtered-out', 'highlighted');
                 if (!activeFilter.type) return;
                 
                 if (activeFilter.type === 'district') {
                     card.classList.add(district === activeFilter.value ? 'highlighted' : 'filtered-out');
-                } else if (activeFilter.type === 'province') {
-                    card.classList.add(province === activeFilter.value ? 'highlighted' : 'filtered-out');
+                } else if (activeFilter.type === 'province' && d) {
+                    card.classList.add(d.province === activeFilter.value ? 'highlighted' : 'filtered-out');
                 }
             });
         }
@@ -959,46 +959,47 @@
             container.innerHTML = sorted.map((d, i) => {
                 const complianceClass = getComplianceClass(d.compliance);
                 const showPriority = i < 5 && d.illegal > 0;
-                const page = DISTRICT_PAGES[d.district];
                 
-                return `<a href="#" class="district-card ${complianceClass}" data-district="${d.district}" data-province="${d.province}" data-page="${page || ''}">
-                    <div class="district-header">
-                        <div>
-                            <div class="district-name">${d.district}</div>
-                            <div class="district-province">${d.province}${showPriority ? ' • #' + (i + 1) + ' Priority' : (d.illegal === 0 ? ' • Pending' : '')}</div>
+                return `
+                    <a href="#" class="district-card ${complianceClass}" data-district="${d.district}">
+                        <div class="district-header">
+                            <div>
+                                <div class="district-name">${d.district}</div>
+                                <div class="district-province">${d.province}${showPriority ? ' • #' + (i + 1) + ' Priority' : (d.illegal === 0 ? ' • Pending' : '')}</div>
+                            </div>
+                            <div class="district-arrow">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </div>
                         </div>
-                        <div class="district-arrow">
-                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        <div class="district-stats">
+                            <div class="district-stat">
+                                <div class="district-stat-value">${formatK(d.total)}</div>
+                                <div class="district-stat-label">Total</div>
+                            </div>
+                            <div class="district-stat">
+                                <div class="district-stat-value">${formatNumber(d.illegal)}</div>
+                                <div class="district-stat-label">Illegal</div>
+                            </div>
+                            <div class="district-stat">
+                                <div class="district-stat-value highlight">${d.compliance > 0 ? d.compliance + '%' : '—'}</div>
+                                <div class="district-stat-label">Compliance</div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="district-stats">
-                        <div class="district-stat"><div class="district-stat-value">${formatK(d.total)}</div><div class="district-stat-label">Total</div></div>
-                        <div class="district-stat"><div class="district-stat-value">${formatNumber(d.illegal)}</div><div class="district-stat-label">Illegal</div></div>
-                        <div class="district-stat"><div class="district-stat-value highlight">${d.compliance > 0 ? d.compliance + '%' : '—'}</div><div class="district-stat-label">Compliance</div></div>
-                    </div>
-                </a>`;
+                    </a>
+                `;
             }).join('');
             
-            // Add click handlers for navigation - direct to specific district
+            // Add click handlers - using same pattern that worked for Musanze
             container.querySelectorAll('.district-card').forEach(card => {
                 card.addEventListener('click', (e) => {
                     e.preventDefault();
                     const district = card.dataset.district;
-                    const page = card.dataset.page;
-                    
+                    const page = DISTRICT_PAGES[district];
                     if (page) {
-                        // Navigate directly to the district - single district in views parameter
-                        const url = `${EXB_BASE_URL}?id=${APP_ID}&page=${page}&views=${encodeURIComponent(district)}`;
-                        
-                        if (window.parent !== window) {
-                            // Inside iframe (Experience Builder)
-                            window.parent.location.href = url;
-                        } else {
-                            // Standalone
-                            window.location.href = url;
-                        }
-                    } else {
-                        console.warn(`No page mapping for district: ${district}`);
+                        const url = `${EXB_BASE_URL}?id=${APP_ID}&page=${page}&views=${district}`;
+                        window.parent.location.href = url;
                     }
                 });
             });
