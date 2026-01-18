@@ -809,7 +809,11 @@
             'Eastern': { bg: 'linear-gradient(90deg, #00e676, #69f0ae)', class: 'eastern' },
             'Western': { bg: 'linear-gradient(90deg, #ff5252, #ff8a80)', class: 'western' },
             'Southern': { bg: 'linear-gradient(90deg, #ffea00, #ffff8d)', class: 'southern' },
-            'Northern': { bg: 'linear-gradient(90deg, #ff9100, #ffab40)', class: 'northern' }
+            'Northern': { bg: 'linear-gradient(90deg, #ff9100, #ffab40)', class: 'northern' },
+            'Eastern Province': { bg: 'linear-gradient(90deg, #00e676, #69f0ae)', class: 'eastern' },
+            'Western Province': { bg: 'linear-gradient(90deg, #ff5252, #ff8a80)', class: 'western' },
+            'Southern Province': { bg: 'linear-gradient(90deg, #ffea00, #ffff8d)', class: 'southern' },
+            'Northern Province': { bg: 'linear-gradient(90deg, #ff9100, #ffab40)', class: 'northern' }
         };
 
         const DISTRICT_PAGES = {
@@ -1105,8 +1109,7 @@
             
             container.innerHTML = sorted.map(p => {
                 const width = Math.max((p.illegal / maxIllegal * 100), 20).toFixed(1);
-                const config = PROVINCE_COLORS[p.name] || { bg: '#666' };
-                // All province colors need dark text for readability
+                const config = PROVINCE_COLORS[p.name] || { bg: 'linear-gradient(90deg, #666, #888)' };
                 return `<div class="chart-bar-row" data-province="${p.name}">
                     <span class="chart-bar-label">${p.name}</span>
                     <div class="chart-bar-container">
