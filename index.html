@@ -472,10 +472,11 @@
 
         .district-card:hover::before { transform: scaleX(1); }
 
-        .district-card.eastern { --card-color: var(--accent-green); }
-        .district-card.western { --card-color: var(--accent-red); }
-        .district-card.northern { --card-color: var(--accent-orange); }
-        .district-card.southern { --card-color: var(--accent-yellow); }
+        /* Compliance-based colors: <50% = red, 50-75% = yellow, >75% = green */
+        .district-card.compliance-critical { --card-color: var(--accent-red); }
+        .district-card.compliance-warning { --card-color: var(--accent-yellow); }
+        .district-card.compliance-good { --card-color: var(--accent-green); }
+        .district-card.compliance-pending { --card-color: var(--text-muted); }
 
         .district-card.filtered-out { opacity: 0.15; transform: scale(0.98); pointer-events: none; }
         .district-card.highlighted { border-color: var(--card-color); box-shadow: 0 0 20px rgba(0, 217, 255, 0.2); }
@@ -702,10 +703,28 @@
         };
 
         const DISTRICT_PAGES = {
-            'Bugesera': 'Eastern-Province', 'Rubavu': 'Western-Province', 'Nyagatare': 'Eastern-Province',
-            'Huye': 'Southern-Province', 'Rusizi': 'Western-Province', 'Kayonza': 'Eastern-Province',
-            'Kirehe': 'Eastern-Province', 'Musanze': 'Northern-Province', 'Rwamagana': 'Eastern-Province'
+            'Bugesera': 'Eastern-Province',
+            'Nyagatare': 'Eastern-Province',
+            'Kayonza': 'Eastern-Province',
+            'Kirehe': 'Eastern-Province',
+            'Rwamagana': 'Eastern-Province',
+            'Rubavu': 'Western-Province',
+            'Rusizi': 'Western-Province',
+            'Huye': 'Southern-Province',
+            'Musanze': 'Northern-Province',
+            'Burera': 'Northern-Province',
+            'Gicumbi': 'Northern-Province',
+            'Gakenke': 'Northern-Province',
+            'Rulindo': 'Northern-Province'
         };
+
+        // Get compliance class based on rate
+        function getComplianceClass(compliance) {
+            if (compliance === 0) return 'compliance-pending';
+            if (compliance < 50) return 'compliance-critical';
+            if (compliance < 75) return 'compliance-warning';
+            return 'compliance-good';
+        }
 
         const ZONING_LABELS = {
             'R1A': 'Low Density', 'A1': 'Agriculture', 'R1B': 'Rural Residential', 'R3': 'Medium Expansion',
@@ -828,14 +847,14 @@
         function updateDistrictCards() {
             document.querySelectorAll('.district-card').forEach(card => {
                 const district = card.dataset.district;
-                const d = allData.districts.find(d => d.district === district);
+                const province = card.dataset.province;
                 card.classList.remove('filtered-out', 'highlighted');
                 if (!activeFilter.type) return;
                 
                 if (activeFilter.type === 'district') {
                     card.classList.add(district === activeFilter.value ? 'highlighted' : 'filtered-out');
-                } else if (activeFilter.type === 'province' && d) {
-                    card.classList.add(d.province === activeFilter.value ? 'highlighted' : 'filtered-out');
+                } else if (activeFilter.type === 'province') {
+                    card.classList.add(province === activeFilter.value ? 'highlighted' : 'filtered-out');
                 }
             });
         }
@@ -934,10 +953,15 @@
         function renderDistrictCards(districts) {
             const container = document.getElementById('districts-grid');
             
-            container.innerHTML = districts.map((d, i) => {
-                const config = PROVINCE_COLORS[d.province] || { class: '' };
+            // Sort by illegal count (enforcement priority)
+            const sorted = [...districts].sort((a, b) => b.illegal - a.illegal);
+            
+            container.innerHTML = sorted.map((d, i) => {
+                const complianceClass = getComplianceClass(d.compliance);
                 const showPriority = i < 5 && d.illegal > 0;
-                return `<a href="#" class="district-card ${config.class}" data-district="${d.district}" data-page="${DISTRICT_PAGES[d.district] || ''}">
+                const page = DISTRICT_PAGES[d.district];
+                
+                return `<a href="#" class="district-card ${complianceClass}" data-district="${d.district}" data-province="${d.province}" data-page="${page || ''}">
                     <div class="district-header">
                         <div>
                             <div class="district-name">${d.district}</div>
@@ -955,14 +979,26 @@
                 </a>`;
             }).join('');
             
+            // Add click handlers for navigation - direct to specific district
             container.querySelectorAll('.district-card').forEach(card => {
                 card.addEventListener('click', (e) => {
                     e.preventDefault();
+                    const district = card.dataset.district;
                     const page = card.dataset.page;
+                    
                     if (page) {
-                        const url = `${EXB_BASE_URL}?id=${APP_ID}&page=${page}&views=${card.dataset.district}`;
-                        if (window.parent !== window) window.parent.location.href = url;
-                        else window.location.href = url;
+                        // Navigate directly to the district - single district in views parameter
+                        const url = `${EXB_BASE_URL}?id=${APP_ID}&page=${page}&views=${encodeURIComponent(district)}`;
+                        
+                        if (window.parent !== window) {
+                            // Inside iframe (Experience Builder)
+                            window.parent.location.href = url;
+                        } else {
+                            // Standalone
+                            window.location.href = url;
+                        }
+                    } else {
+                        console.warn(`No page mapping for district: ${district}`);
                     }
                 });
             });
